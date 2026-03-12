@@ -1,0 +1,27 @@
+# Rails
+/rails/log/*
+/rails/tmp/*
+!/rails/log/.keep
+!/rails/tmp/.keep
+/rails/storage/*
+!/rails/storage/.keep
+/rails/config/master.key
+/rails/.bundle
+/rails/.env*
+!/rails/.env*.erb
+
+# Next.js
+/next/.next/
+/next/node_modules/
+/next/.env.local
+
+# OS・エディタの一時ファイル
+.DS_Store
+*.swp
+*~
+.idea/
+.idea/*
+/.vscode/
+
+# その他
+*.log
