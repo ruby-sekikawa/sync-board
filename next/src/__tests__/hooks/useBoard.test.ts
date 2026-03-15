@@ -65,7 +65,7 @@ describe('useBoard', () => {
   })
 
   it('ボードデータを返す', () => {
-    const { result } = renderHook(() => useBoard('1'))
+    const { result } = renderHook(() => useBoard('1', '1'))
     expect(result.current.board).toEqual(mockBoard)
     expect(result.current.isLoading).toBe(false)
   })
@@ -81,7 +81,7 @@ describe('useBoard', () => {
       },
     })
 
-    const { result } = renderHook(() => useBoard('1'))
+    const { result } = renderHook(() => useBoard('1', '1'))
 
     await act(async () => {
       await result.current.moveTask({
@@ -104,7 +104,7 @@ describe('useBoard', () => {
       new Error('API Error'),
     )
 
-    const { result } = renderHook(() => useBoard('1'))
+    const { result } = renderHook(() => useBoard('1', '1'))
 
     // moveTask は失敗時に throw するので try/catch で包む
     await act(async () => {

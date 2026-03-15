@@ -21,10 +21,13 @@ interface BoardChannelMessage {
   [key: string]: any
 }
 
-export function useBoardChannel(boardId: string | undefined) {
+export function useBoardChannel(
+  boardId: string | undefined,
+  projectId: string | undefined,
+) {
   const [connectionStatus, setConnectionStatus] =
     useState<ConnectionStatus>('connecting')
-  const { mutate } = useBoard(boardId)
+  const { mutate } = useBoard(boardId, projectId)
   const retryCountRef = useRef(0)
   const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 

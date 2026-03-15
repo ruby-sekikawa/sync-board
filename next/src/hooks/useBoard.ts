@@ -13,10 +13,16 @@ interface MoveTaskParams {
   toPosition: number
 }
 
-export function useBoard(boardId: string | undefined) {
+export function useBoard(
+  boardId: string | undefined,
+  projectId: string | undefined,
+) {
   const { data, error, isLoading, mutate } = useSWR<{
     board: BoardWithColumns
-  }>(boardId ? `/boards/${boardId}` : null, fetcher)
+  }>(
+    boardId && projectId ? `/projects/${projectId}/boards/${boardId}` : null,
+    fetcher,
+  )
 
   const board = data?.board
 

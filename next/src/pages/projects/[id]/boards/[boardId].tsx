@@ -54,8 +54,8 @@ export default function BoardPage() {
         </Typography>
       </Box>
 
-      {typeof boardId === 'string' && (
-        <KanbanBoard boardId={boardId} canEdit={!!canEdit} />
+      {typeof boardId === 'string' && typeof id === 'string' && (
+        <KanbanBoard boardId={boardId} projectId={id} canEdit={!!canEdit} />
       )}
     </Box>
   )

@@ -5,7 +5,7 @@ const TOKEN_KEYS = ['access-token', 'client', 'uid'] as const
 const axiosInstance = axios.create({
   baseURL:
     process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3000/api/v1',
-  headers: { 'Content-Type': 'application/json' },
+  headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
 })
 
 // リクエストインターセプター: localStorageのトークンをヘッダーに付与

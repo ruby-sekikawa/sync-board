@@ -1,6 +1,12 @@
 import { renderHook, act } from '@testing-library/react'
 import { useBoardChannel } from '@/hooks/useBoardChannel'
 
+type ChannelCallbacks = {
+  connected: () => void
+  disconnected: () => void
+  received: (data: unknown) => void
+}
+
 // @rails/actioncable をモック
 const mockSubscription = {
   unsubscribe: jest.fn(),
@@ -25,13 +31,18 @@ jest.mock('@/hooks/useBoard', () => ({
   }),
 }))
 
+function getCallbacks(): ChannelCallbacks {
+  const calls = mockConsumer.subscriptions.create.mock.calls as unknown[][]
+  return calls[0][1] as ChannelCallbacks
+}
+
 describe('useBoardChannel', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
   it('マウント時にBoardChannelをサブスクライブする', () => {
-    renderHook(() => useBoardChannel('1'))
+    renderHook(() => useBoardChannel('1', '1'))
     expect(mockConsumer.subscriptions.create).toHaveBeenCalledWith(
       { channel: 'BoardChannel', board_id: '1' },
       expect.objectContaining({
@@ -43,15 +54,14 @@ describe('useBoardChannel', () => {
   })
 
   it('アンマウント時にアンサブスクライブする', () => {
-    const { unmount } = renderHook(() => useBoardChannel('1'))
+    const { unmount } = renderHook(() => useBoardChannel('1', '1'))
     unmount()
     expect(mockSubscription.unsubscribe).toHaveBeenCalled()
   })
 
   it('connected時にconnectionStatusがconnectedになる', () => {
-    const { result } = renderHook(() => useBoardChannel('1'))
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const callbacks = (mockConsumer.subscriptions.create.mock.calls[0] as any[])[1]
+    const { result } = renderHook(() => useBoardChannel('1', '1'))
+    const callbacks = getCallbacks()
 
     act(() => {
       callbacks.connected()
@@ -61,9 +71,8 @@ describe('useBoardChannel', () => {
   })
 
   it('disconnected時にconnectionStatusがreconnectingになる（リトライあり）', () => {
-    const { result } = renderHook(() => useBoardChannel('1'))
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const callbacks = (mockConsumer.subscriptions.create.mock.calls[0] as any[])[1]
+    const { result } = renderHook(() => useBoardChannel('1', '1'))
+    const callbacks = getCallbacks()
 
     act(() => {
       callbacks.disconnected()
@@ -75,9 +84,8 @@ describe('useBoardChannel', () => {
   })
 
   it('task_moved メッセージ受信時にmutateを呼ぶ', () => {
-    renderHook(() => useBoardChannel('1'))
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const callbacks = (mockConsumer.subscriptions.create.mock.calls[0] as any[])[1]
+    renderHook(() => useBoardChannel('1', '1'))
+    const callbacks = getCallbacks()
 
     act(() => {
       callbacks.received({
@@ -91,9 +99,8 @@ describe('useBoardChannel', () => {
   })
 
   it('task_created メッセージ受信時にmutateを呼ぶ', () => {
-    renderHook(() => useBoardChannel('1'))
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const callbacks = (mockConsumer.subscriptions.create.mock.calls[0] as any[])[1]
+    renderHook(() => useBoardChannel('1', '1'))
+    const callbacks = getCallbacks()
 
     act(() => {
       callbacks.received({ type: 'task_created', task: { id: 2 } })

@@ -2,9 +2,9 @@ import '@/styles/globals.css'
 import type { EmotionCache } from '@emotion/cache'
 import { CacheProvider } from '@emotion/react'
 import { ThemeProvider, CssBaseline } from '@mui/material'
-import type { AppProps } from 'next/app'
-import type { NextWebVitalsMetric } from 'next/app'
+import type { AppProps, NextWebVitalsMetric } from 'next/app'
 import { SWRConfig } from 'swr'
+import Layout from '@/components/common/Layout'
 import createEmotionCache from '@/styles/createEmotionCache'
 import theme from '@/styles/theme'
 
@@ -30,7 +30,9 @@ export default function App({
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <SWRConfig value={{ revalidateOnFocus: false }}>
-          <Component {...pageProps} />
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
         </SWRConfig>
       </ThemeProvider>
     </CacheProvider>

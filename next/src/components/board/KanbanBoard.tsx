@@ -23,12 +23,13 @@ import type { Column, Task } from '@/types'
 
 interface Props {
   boardId: string
+  projectId: string
   canEdit: boolean
 }
 
-export default function KanbanBoard({ boardId, canEdit }: Props) {
-  const { board, isLoading, moveTask, addTask } = useBoard(boardId)
-  const { connectionStatus } = useBoardChannel(boardId)
+export default function KanbanBoard({ boardId, projectId, canEdit }: Props) {
+  const { board, isLoading, moveTask, addTask } = useBoard(boardId, projectId)
+  const { connectionStatus } = useBoardChannel(boardId, projectId)
   const [activeTask, setActiveTask] = useState<Task | null>(null)
   const [overColumnId, setOverColumnId] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
