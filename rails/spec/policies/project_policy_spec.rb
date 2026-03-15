@@ -15,67 +15,67 @@ RSpec.describe ProjectPolicy, type: :policy do
 
   describe "index?" do
     it "ownerは許可" do
-      expect(described_class.new(owner_user, project).index?).to be true
+      expect(ProjectPolicy.new(owner_user, project).index?).to be true
     end
 
     it "editorは許可" do
-      expect(described_class.new(editor_user, project).index?).to be true
+      expect(ProjectPolicy.new(editor_user, project).index?).to be true
     end
 
     it "viewerは許可" do
-      expect(described_class.new(viewer_user, project).index?).to be true
+      expect(ProjectPolicy.new(viewer_user, project).index?).to be true
     end
 
     it "非メンバーは拒否" do
-      expect(described_class.new(outsider, project).index?).to be false
+      expect(ProjectPolicy.new(outsider, project).index?).to be false
     end
   end
 
   describe "show?" do
     it "ownerは許可" do
-      expect(described_class.new(owner_user, project).show?).to be true
+      expect(ProjectPolicy.new(owner_user, project).show?).to be true
     end
 
     it "非メンバーは拒否" do
-      expect(described_class.new(outsider, project).show?).to be false
+      expect(ProjectPolicy.new(outsider, project).show?).to be false
     end
   end
 
   describe "create?" do
     it "全ユーザーに許可" do
-      expect(described_class.new(outsider, project).create?).to be true
+      expect(ProjectPolicy.new(outsider, project).create?).to be true
     end
   end
 
   describe "update?" do
     it "ownerは許可" do
-      expect(described_class.new(owner_user, project).update?).to be true
+      expect(ProjectPolicy.new(owner_user, project).update?).to be true
     end
 
     it "editorは拒否" do
-      expect(described_class.new(editor_user, project).update?).to be false
+      expect(ProjectPolicy.new(editor_user, project).update?).to be false
     end
 
     it "viewerは拒否" do
-      expect(described_class.new(viewer_user, project).update?).to be false
+      expect(ProjectPolicy.new(viewer_user, project).update?).to be false
     end
 
     it "非メンバーは拒否" do
-      expect(described_class.new(outsider, project).update?).to be false
+      expect(ProjectPolicy.new(outsider, project).update?).to be false
     end
   end
 
   describe "destroy?" do
     it "ownerは許可" do
-      expect(described_class.new(owner_user, project).destroy?).to be true
+      expect(ProjectPolicy.new(owner_user, project).destroy?).to be true
     end
 
     it "editorは拒否" do
-      expect(described_class.new(editor_user, project).destroy?).to be false
+      expect(ProjectPolicy.new(editor_user, project).destroy?).to be false
     end
 
     it "非メンバーは拒否" do
-      expect(described_class.new(outsider, project).destroy?).to be false
+      expect(ProjectPolicy.new(outsider, project).destroy?).to be false
     end
   end
 end

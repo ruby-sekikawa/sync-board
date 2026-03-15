@@ -23,7 +23,7 @@ RSpec.describe Board, type: :model do
     it "ボード削除時にカラムもcascade削除される" do
       board = create(:board)
       create(:column, board:)
-      expect { board.destroy }.to change(Column, :count).by(-1)
+      expect { board.destroy }.to change { Column.count }.by(-1)
     end
   end
 end

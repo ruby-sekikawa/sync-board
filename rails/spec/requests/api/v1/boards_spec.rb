@@ -35,7 +35,7 @@ RSpec.describe "Api::V1::Boards", type: :request do
       let(:params) { { name: "スプリント1", description: "説明" } }
 
       it "ボードを作成できる" do
-        expect { subject }.to change(Board, :count).by(1)
+        expect { subject }.to change { Board.count }.by(1)
         res = JSON.parse(response.body)
         expect(res["board"]["name"]).to eq "スプリント1"
         expect(response).to have_http_status(:created)
@@ -47,7 +47,7 @@ RSpec.describe "Api::V1::Boards", type: :request do
       let(:params) { { name: "スプリント2" } }
 
       it "ボードを作成できる" do
-        expect { subject }.to change(Board, :count).by(1)
+        expect { subject }.to change { Board.count }.by(1)
         expect(response).to have_http_status(:created)
       end
     end
@@ -57,7 +57,7 @@ RSpec.describe "Api::V1::Boards", type: :request do
       let(:params) { { name: "スプリント3" } }
 
       it "403を返す" do
-        expect { subject }.not_to change(Board, :count)
+        expect { subject }.not_to change { Board.count }
         expect(response).to have_http_status(:forbidden)
       end
     end
@@ -67,7 +67,7 @@ RSpec.describe "Api::V1::Boards", type: :request do
       let(:params) { { name: "" } }
 
       it "422を返す" do
-        expect { subject }.not_to change(Board, :count)
+        expect { subject }.not_to change { Board.count }
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
@@ -124,7 +124,7 @@ RSpec.describe "Api::V1::Boards", type: :request do
       let(:headers) { owner_headers }
 
       it "ボードを削除できる" do
-        expect { subject }.to change(Board, :count).by(-1)
+        expect { subject }.to change { Board.count }.by(-1)
         expect(response).to have_http_status(:no_content)
       end
     end

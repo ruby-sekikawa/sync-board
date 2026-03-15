@@ -11,12 +11,12 @@ RSpec.describe "Api::V1::Auth::Registrations", type: :request do
           password: "password123",
           password_confirmation: "password123",
           name: "テストユーザー",
-          confirm_success_url: "http://localhost:8000"
+          confirm_success_url: "http://localhost:8000",
         }
       end
 
       it "ユーザーが作成され、nameが保存される" do
-        expect { subject }.to change(User, :count).by(1)
+        expect { subject }.to change { User.count }.by(1)
         res = JSON.parse(response.body)
         expect(res["data"]["name"]).to eq "テストユーザー"
         expect(response).to have_http_status(:ok)
@@ -29,12 +29,12 @@ RSpec.describe "Api::V1::Auth::Registrations", type: :request do
           email: "test@example.com",
           password: "password123",
           password_confirmation: "password123",
-          confirm_success_url: "http://localhost:8000"
+          confirm_success_url: "http://localhost:8000",
         }
       end
 
       it "ユーザー作成が失敗し422が返る" do
-        expect { subject }.not_to change(User, :count)
+        expect { subject }.not_to change { User.count }
         res = JSON.parse(response.body)
         expect(res["errors"]["full_messages"]).to include("名前を入力してください")
         expect(response).to have_http_status(:unprocessable_entity)

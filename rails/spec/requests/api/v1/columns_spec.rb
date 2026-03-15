@@ -20,7 +20,7 @@ RSpec.describe "Api::V1::Columns", type: :request do
       let(:params) { { name: "TODO", position: 65536.0 } }
 
       it "カラムを作成できる" do
-        expect { subject }.to change(Column, :count).by(1)
+        expect { subject }.to change { Column.count }.by(1)
         res = JSON.parse(response.body)
         expect(res["column"]["name"]).to eq "TODO"
         expect(response).to have_http_status(:created)
@@ -44,7 +44,7 @@ RSpec.describe "Api::V1::Columns", type: :request do
       before { create_list(:column, 20, board:) }
 
       it "422を返す" do
-        expect { subject }.not_to change(Column, :count)
+        expect { subject }.not_to change { Column.count }
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
@@ -86,7 +86,7 @@ RSpec.describe "Api::V1::Columns", type: :request do
       let(:headers) { owner_headers }
 
       it "カラムを削除できる" do
-        expect { subject }.to change(Column, :count).by(-1)
+        expect { subject }.to change { Column.count }.by(-1)
         expect(response).to have_http_status(:no_content)
       end
     end

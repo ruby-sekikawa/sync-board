@@ -62,7 +62,9 @@ export default function KanbanBoard({ boardId, projectId, canEdit }: Props) {
   const [newColumnName, setNewColumnName] = useState('')
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [addTaskColumnId, setAddTaskColumnId] = useState<number | null>(null)
-  const [deleteTargetColumnId, setDeleteTargetColumnId] = useState<number | null>(null)
+  const [deleteTargetColumnId, setDeleteTargetColumnId] = useState<
+    number | null
+  >(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -311,7 +313,9 @@ export default function KanbanBoard({ boardId, projectId, canEdit }: Props) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteTargetColumnId(null)}>キャンセル</Button>
+          <Button onClick={() => setDeleteTargetColumnId(null)}>
+            キャンセル
+          </Button>
           <Button
             color="error"
             variant="contained"

@@ -27,7 +27,7 @@ RSpec.describe Project, type: :model do
     it "プロジェクト削除時にmembershipsもcascade削除される" do
       project = create(:project)
       create(:project_membership, project:, user: create(:user))
-      expect { project.destroy }.to change(ProjectMembership, :count).by(-1)
+      expect { project.destroy }.to change { ProjectMembership.count }.by(-1)
     end
   end
 end

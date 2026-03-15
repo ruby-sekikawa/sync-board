@@ -41,8 +41,8 @@ RSpec.describe "Api::V1::Projects", type: :request do
       let(:params) { { name: "新プロジェクト", description: "説明" } }
 
       it "プロジェクトが作成され、作成者がownerとして登録される" do
-        expect { subject }.to change(Project, :count).by(1)
-          .and change(ProjectMembership, :count).by(1)
+        expect { subject }.to change { Project.count }.by(1).
+                                and change { ProjectMembership.count }.by(1)
         res = JSON.parse(response.body)
         expect(res["project"]["name"]).to eq "新プロジェクト"
         expect(res["project"]["current_user_role"]).to eq "owner"
@@ -54,7 +54,7 @@ RSpec.describe "Api::V1::Projects", type: :request do
       let(:params) { { name: "" } }
 
       it "422を返す" do
-        expect { subject }.not_to change(Project, :count)
+        expect { subject }.not_to change { Project.count }
         expect(response).to have_http_status(:unprocessable_entity)
       end
     end
@@ -135,7 +135,7 @@ RSpec.describe "Api::V1::Projects", type: :request do
 
       it "プロジェクトを削除できる" do
         project
-        expect { subject }.to change(Project, :count).by(-1)
+        expect { subject }.to change { Project.count }.by(-1)
         expect(response).to have_http_status(:no_content)
       end
     end
@@ -188,7 +188,7 @@ RSpec.describe "Api::V1::Projects", type: :request do
     context "ownerの場合" do
       it "メンバーを追加できる" do
         new_user
-        expect { subject }.to change(ProjectMembership, :count).by(1)
+        expect { subject }.to change { ProjectMembership.count }.by(1)
         expect(response).to have_http_status(:created)
       end
     end
@@ -260,7 +260,7 @@ RSpec.describe "Api::V1::Projects", type: :request do
 
     context "ownerの場合" do
       it "メンバーを削除できる" do
-        expect { subject }.to change(ProjectMembership, :count).by(-1)
+        expect { subject }.to change { ProjectMembership.count }.by(-1)
         expect(response).to have_http_status(:no_content)
       end
     end

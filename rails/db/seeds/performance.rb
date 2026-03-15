@@ -9,7 +9,7 @@
 # 削除方法:
 #   docker compose exec rails bundle exec rails runner "Project.where(name: 'パフォーマンステスト').destroy_all"
 
-puts "パフォーマンステスト用データを作成します..."
+Rails.logger.debug "パフォーマンステスト用データを作成します..."
 
 # テストユーザー作成（既存ならスキップ）
 user = User.find_or_initialize_by(email: "perf@example.com")
@@ -19,19 +19,19 @@ if user.new_record?
     password: "password",
     password_confirmation: "password",
     uid: "perf@example.com",
-    provider: "email"
+    provider: "email",
   )
   user.save!(validate: false)
-  puts "  ユーザー作成: #{user.email}"
+  Rails.logger.debug "  ユーザー作成: #{user.email}"
 else
-  puts "  ユーザー既存: #{user.email}"
+  Rails.logger.debug "  ユーザー既存: #{user.email}"
 end
 
 # プロジェクト作成
 project = Project.find_or_create_by!(name: "パフォーマンステスト") do |p|
   p.description = "200タスクのガントチャート計測用プロジェクト"
 end
-puts "  プロジェクト: #{project.name}"
+Rails.logger.debug "  プロジェクト: #{project.name}"
 
 # オーナーメンバーシップ
 ProjectMembership.find_or_create_by!(project: project, user: user) do |m|
@@ -40,7 +40,7 @@ end
 
 # ボード作成
 board = Board.find_or_create_by!(project: project, name: "パフォーマンスボード")
-puts "  ボード: #{board.name}"
+Rails.logger.debug "  ボード: #{board.name}"
 
 # カラム作成
 columns = ["TODO", "進行中", "レビュー", "完了"].map.with_index(1) do |name, i|
@@ -48,7 +48,7 @@ columns = ["TODO", "進行中", "レビュー", "完了"].map.with_index(1) do |
     c.position = i * 65536.0
   end
 end
-puts "  カラム: #{columns.map(&:name).join(', ')}"
+Rails.logger.debug "  カラム: #{columns.map(&:name).join(", ")}"
 
 # 既存タスクを削除して再作成
 Task.where(board: board).delete_all
@@ -69,11 +69,11 @@ start_date = Date.new(2026, 1, 1)
     priority: priority,
     due_date: start_date + due_offset.days,
     position: (i + 1) * 65536.0,
-    created_by_user: user
+    created_by_user: user,
   )
 end
 
-puts "  タスク作成: 200件"
-puts ""
-puts "完了！ブラウザで以下にアクセスしてください:"
-puts "  http://localhost:8000/projects/#{project.id}/gantt"
+Rails.logger.debug "  タスク作成: 200件"
+Rails.logger.debug ""
+Rails.logger.debug "完了！ブラウザで以下にアクセスしてください:"
+Rails.logger.debug "  http://localhost:8000/projects/#{project.id}/gantt"
