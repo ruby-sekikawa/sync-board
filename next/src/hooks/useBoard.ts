@@ -73,7 +73,9 @@ export function useBoard(
   const addTask = async (
     columnId: number,
     title: string,
-    priority: 'low' | 'medium' | 'high' = 'medium',
+    priority: Task['priority'] = 'medium',
+    description?: string | null,
+    due_date?: string | null,
   ) => {
     if (!board) return
     const column = board.columns.find((c) => c.id === columnId)
@@ -83,10 +85,61 @@ export function useBoard(
       title,
       column_id: columnId,
       priority,
+      description,
+      due_date,
       position: maxPosition + 65536,
     })
     mutate()
   }
 
-  return { board, isLoading, error, mutate, moveTask, addTask }
+  const updateColumn = async (columnId: number, name: string) => {
+    await axiosInstance.patch(`/boards/${boardId}/columns/${columnId}`, {
+      name,
+    })
+    mutate()
+  }
+
+  const updateTask = async (
+    taskId: number,
+    params: Partial<
+      Pick<Task, 'title' | 'description' | 'priority' | 'due_date'>
+    >,
+  ) => {
+    await axiosInstance.patch(`/boards/${boardId}/tasks/${taskId}`, params)
+    mutate()
+  }
+
+  const deleteTask = async (taskId: number) => {
+    await axiosInstance.delete(`/boards/${boardId}/tasks/${taskId}`)
+    mutate()
+  }
+
+  const deleteColumn = async (columnId: number) => {
+    await axiosInstance.delete(`/boards/${boardId}/columns/${columnId}`)
+    mutate()
+  }
+
+  const addColumn = async (name: string) => {
+    const maxPosition =
+      board?.columns.reduce((max, c) => Math.max(max, c.position), 0) ?? 0
+    await axiosInstance.post(`/boards/${boardId}/columns`, {
+      name,
+      position: maxPosition + 65536,
+    })
+    mutate()
+  }
+
+  return {
+    board,
+    isLoading,
+    error,
+    mutate,
+    moveTask,
+    addTask,
+    addColumn,
+    updateColumn,
+    updateTask,
+    deleteTask,
+    deleteColumn,
+  }
 }

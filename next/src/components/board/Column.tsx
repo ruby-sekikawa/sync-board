@@ -1,33 +1,45 @@
 import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import AddIcon from '@mui/icons-material/Add'
-import { Box, Typography, TextField, Button } from '@mui/material'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import { Box, Typography, TextField, Button, IconButton } from '@mui/material'
 import { useState } from 'react'
+
 import TaskCard from './TaskCard'
 import type { Column, Task } from '@/types'
 
 interface Props {
   column: Column
   isOver?: boolean
-  onAddTask?: (columnId: number, title: string) => void
+  canEdit?: boolean
+  onOpenAddTask?: (columnId: number) => void
   onTaskClick?: (task: Task) => void
+  onUpdateColumn?: (columnId: number, name: string) => void
+  onDeleteColumn?: (columnId: number) => void
 }
 
 export default function BoardColumn({
   column,
   isOver,
-  onAddTask,
+  canEdit,
+  onOpenAddTask,
   onTaskClick,
+  onUpdateColumn,
+  onDeleteColumn,
 }: Props) {
-  const [adding, setAdding] = useState(false)
-  const [newTitle, setNewTitle] = useState('')
+  const [editingName, setEditingName] = useState(false)
+  const [columnName, setColumnName] = useState(column.name)
   const { setNodeRef } = useDroppable({ id: column.id })
 
-  const handleAdd = () => {
-    if (!newTitle.trim()) return
-    onAddTask?.(column.id, newTitle.trim())
-    setNewTitle('')
-    setAdding(false)
+  const handleNameSubmit = () => {
+    const name = columnName.trim()
+    if (!name || name === column.name) {
+      setColumnName(column.name)
+      setEditingName(false)
+      return
+    }
+    onUpdateColumn?.(column.id, name)
+    setEditingName(false)
   }
 
   return (
@@ -45,17 +57,56 @@ export default function BoardColumn({
         transition: 'border-color 0.15s, background-color 0.15s',
       }}
     >
-      <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 1, px: 0.5 }}>
-        {column.name}
-        <Typography
-          component="span"
-          variant="caption"
-          color="text.secondary"
-          sx={{ ml: 1 }}
-        >
-          {column.tasks.length}
-        </Typography>
-      </Typography>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, px: 0.5 }}>
+        {editingName ? (
+          <TextField
+            size="small"
+            value={columnName}
+            onChange={(e) => setColumnName(e.target.value)}
+            onBlur={handleNameSubmit}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleNameSubmit()
+              if (e.key === 'Escape') {
+                setColumnName(column.name)
+                setEditingName(false)
+              }
+            }}
+            autoFocus
+            fullWidth
+            sx={{ mr: 1 }}
+          />
+        ) : (
+          <Typography
+            variant="subtitle1"
+            fontWeight="bold"
+            sx={{
+              flexGrow: 1,
+              cursor: canEdit ? 'pointer' : 'default',
+              '&:hover': canEdit ? { textDecoration: 'underline' } : {},
+            }}
+            onClick={() => canEdit && setEditingName(true)}
+          >
+            {column.name}
+            <Typography
+              component="span"
+              variant="caption"
+              color="text.secondary"
+              sx={{ ml: 1 }}
+            >
+              {column.tasks.length}
+            </Typography>
+          </Typography>
+        )}
+        {canEdit && !editingName && (
+          <IconButton
+            size="small"
+            onClick={() => onDeleteColumn?.(column.id)}
+            sx={{ color: 'text.disabled', '&:hover': { color: 'error.main' } }}
+          >
+            <DeleteOutlineIcon fontSize="small" />
+          </IconButton>
+        )}
+      </Box>
 
       <SortableContext
         items={column.tasks.map((t) => t.id)}
@@ -66,35 +117,11 @@ export default function BoardColumn({
         ))}
       </SortableContext>
 
-      {adding ? (
-        <Box sx={{ mt: 1 }}>
-          <TextField
-            autoFocus
-            size="small"
-            fullWidth
-            placeholder="タスク名を入力"
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') handleAdd()
-              if (e.key === 'Escape') setAdding(false)
-            }}
-            sx={{ mb: 0.5 }}
-          />
-          <Box sx={{ display: 'flex', gap: 0.5 }}>
-            <Button size="small" variant="contained" onClick={handleAdd}>
-              追加
-            </Button>
-            <Button size="small" onClick={() => setAdding(false)}>
-              キャンセル
-            </Button>
-          </Box>
-        </Box>
-      ) : (
+      {onOpenAddTask && (
         <Button
           size="small"
           startIcon={<AddIcon />}
-          onClick={() => setAdding(true)}
+          onClick={() => onOpenAddTask(column.id)}
           sx={{ mt: 0.5, width: '100%', justifyContent: 'flex-start' }}
         >
           タスクを追加
