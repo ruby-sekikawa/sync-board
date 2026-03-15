@@ -51,10 +51,9 @@ RSpec.describe "Api::V1::Columns", type: :request do
   end
 
   describe "PATCH /api/v1/boards/:board_id/columns/:id" do
-    subject { patch(api_v1_board_column_path(board, column), params:, headers:) }
+    subject { patch(api_v1_board_column_path(board, column), params: { name: "新名前", position: 32768.0 }, headers:) }
 
     let!(:column) { create(:column, board:, name: "旧名前") }
-    let(:params) { { name: "新名前", position: 32768.0 } }
 
     context "ownerの場合" do
       let(:headers) { owner_headers }

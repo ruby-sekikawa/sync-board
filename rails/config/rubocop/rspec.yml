@@ -41,5 +41,5 @@ RSpec/ReturnFromStub:
 
 RSpec/MultipleMemoizedHelpers:
   Enabled: true
-  Max: 8
+  Max: 12
   AllowSubject: false

@@ -4,28 +4,23 @@ require "rails_helper"
 
 RSpec.describe "Api::V1::Tasks", type: :request do
   let(:owner) { create(:user) }
-  let(:editor) { create(:user) }
   let(:viewer) { create(:user) }
-  let(:non_member) { create(:user) }
   let!(:project) do
     p = create(:project, owner:)
     create(:project_membership, project: p, user: owner, role: :owner)
-    create(:project_membership, project: p, user: editor, role: :editor)
     create(:project_membership, project: p, user: viewer, role: :viewer)
     p
   end
   let(:board) { create(:board, project:) }
   let(:column) { create(:column, board:) }
-  let(:other_column) { create(:column, board:, position: 131072.0) }
-
   let(:owner_headers) { owner.create_new_auth_token }
-  let(:editor_headers) { editor.create_new_auth_token }
   let(:viewer_headers) { viewer.create_new_auth_token }
-  let(:non_member_headers) { non_member.create_new_auth_token }
 
   describe "GET /api/v1/boards/:board_id/tasks" do
-    let!(:task1) { create(:task, column:, board:, created_by_user: owner, position: 65536.0) }
-    let!(:task2) { create(:task, column:, board:, created_by_user: owner, position: 131072.0) }
+    let(:non_member) { create(:user) }
+    let(:non_member_headers) { non_member.create_new_auth_token }
+    let!(:first_task) { create(:task, column:, board:, created_by_user: owner, position: 65536.0) }
+    let!(:second_task) { create(:task, column:, board:, created_by_user: owner, position: 131072.0) }
 
     context "ownerの場合" do
       it "タスク一覧を返す" do
@@ -52,6 +47,8 @@ RSpec.describe "Api::V1::Tasks", type: :request do
   end
 
   describe "POST /api/v1/boards/:board_id/tasks" do
+    let(:editor) { create(:user) }
+    let(:editor_headers) { editor.create_new_auth_token }
     let(:valid_params) do
       {
         title: "新タスク",
@@ -61,6 +58,8 @@ RSpec.describe "Api::V1::Tasks", type: :request do
         position: 65536.0,
       }
     end
+
+    before { create(:project_membership, project:, user: editor, role: :editor) }
 
     context "ownerの場合" do
       it "タスクを作成できる" do
@@ -131,6 +130,7 @@ RSpec.describe "Api::V1::Tasks", type: :request do
   end
 
   describe "PATCH /api/v1/boards/:board_id/tasks/:id/move" do
+    let(:other_column) { create(:column, board:, position: 131072.0) }
     let!(:task) { create(:task, column:, board:, created_by_user: owner, position: 65536.0) }
 
     context "ownerの場合" do
@@ -151,10 +151,11 @@ RSpec.describe "Api::V1::Tasks", type: :request do
       end
 
       it "moveアクション後にbroadcastが実行される" do
-        expect(ActionCable.server).to receive(:broadcast).with("board_#{board.id}", hash_including(type: "task_moved"))
+        allow(ActionCable.server).to receive(:broadcast)
         patch "/api/v1/boards/#{board.id}/tasks/#{task.id}/move",
               params: { column_id: column.id, position: 32768.0 },
               headers: owner_headers, as: :json
+        expect(ActionCable.server).to have_received(:broadcast).with("board_#{board.id}", hash_including(type: "task_moved"))
       end
     end
 

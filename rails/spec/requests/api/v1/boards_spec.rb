@@ -90,10 +90,9 @@ RSpec.describe "Api::V1::Boards", type: :request do
   end
 
   describe "PATCH /api/v1/projects/:project_id/boards/:id" do
-    subject { patch(api_v1_project_board_path(project, board), params:, headers:) }
+    subject { patch(api_v1_project_board_path(project, board), params: { name: "更新後ボード名" }, headers:) }
 
     let!(:board) { create(:board, project:) }
-    let(:params) { { name: "更新後ボード名" } }
 
     context "ownerの場合" do
       let(:headers) { owner_headers }
