@@ -25,3 +25,9 @@
 
 # その他
 *.log
+
+.claude/
+
+CLAUDE.md
+
+docs/

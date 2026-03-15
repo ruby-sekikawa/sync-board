@@ -14,7 +14,7 @@ import createEmotionCache from '@/styles/createEmotionCache'
 import theme from '@/styles/theme'
 
 export default class MyDocument extends Document {
-  render(): JSX.Element {
+  render(): React.ReactElement {
     return (
       <Html lang="ja">
         <Head>
@@ -26,8 +26,8 @@ export default class MyDocument extends Document {
           />
         </Head>
         <body>
-        <Main />
-        <NextScript />
+          <Main />
+          <NextScript />
         </body>
       </Html>
     )
@@ -70,9 +70,8 @@ MyDocument.getInitialProps = async (ctx): Promise<DocumentInitialProps> => {
     originalRenderPage({
       enhanceApp:
         (App: any) =>
-          // eslint-disable-next-line react/display-name
-          (props): JSX.Element =>
-            <App emotionCache={cache} {...props} />,
+        // eslint-disable-next-line react/display-name
+        (props): React.ReactElement => <App emotionCache={cache} {...props} />,
     })
 
   const initialProps = await Document.getInitialProps(ctx)

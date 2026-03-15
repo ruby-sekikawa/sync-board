@@ -35,6 +35,8 @@ end
 RSpec.configure do |config|
   # FactoryBotの宣言を省略
   config.include FactoryBot::Syntax::Methods
+  # Punditポリシーテスト用
+  config.include Pundit::Matchers, type: :policy
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [

@@ -11,6 +11,12 @@ services:
       - "3309:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
   rails:
     build:
       context: ./rails
@@ -21,6 +27,7 @@ services:
       - 3000:3000
     depends_on:
       - db
+      - redis
     tty: true
     stdin_open: true
   next:
@@ -34,3 +41,4 @@ services:
       - "8000:3000"
 volumes:
   mysql_data:
+  redis_data:

@@ -1,4 +1,4 @@
-# テスト(rspec)、コードルール(rubocop, eslint, prettier)のチェックを行う
+# テスト(rspec, jest)、コードルール(rubocop, eslint, prettier)、型チェック(tsc)のチェックを行う
 name: Continuous Integration
 
 # 当 workflow の実行タイミング
@@ -22,6 +22,11 @@ jobs:
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
         options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: --health-cmd "redis-cli ping" --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
       - name: Checkout code
@@ -32,14 +37,6 @@ jobs:
         with:
           ruby-version: 3.1.2
           bundler-cache: true
-
-      - name: Cache node modules
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
 
       - name: Bundler and gem install
         run: |
@@ -79,8 +76,8 @@ jobs:
       - name: Run rubocop
         run: bundle exec rubocop
 
-  # 処理③ eslint(& prettier) のルール違反がないことをチェック
-  eslint:
+  # 処理③ フロントエンド: eslint, tsc, jest
+  frontend:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -89,8 +86,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install packages
-        run: npm install
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: next/package-lock.json
 
-      - name: Run lint
+      - name: Install packages
+        run: npm install --legacy-peer-deps
+
+      - name: Run ESLint
         run: npm run lint
+
+      - name: Run TypeScript type check
+        run: npx tsc --noEmit
+
+      - name: Run Jest
+        run: npm test

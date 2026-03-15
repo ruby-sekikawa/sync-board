@@ -24,6 +24,12 @@ gem "devise_token_auth"
 # MySQLに接続する
 gem "mysql2", "~> 0.5"
 
+# Action CableのRedisアダプター
+gem "redis", "~> 5.0"
+
+# 権限管理
+gem "pundit"
+
 # pumaサーバーを使えるようにする（標準gem）
 gem "puma", "~> 6.0"
 
@@ -49,6 +55,7 @@ group :development, :test do
   gem "pry-doc"
   gem "pry-rails"
 
+  gem "pundit-matchers"
   gem "rspec-rails"
 
   # rubocop を使えるようにする。
