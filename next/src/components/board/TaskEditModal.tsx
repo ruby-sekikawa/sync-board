@@ -26,7 +26,12 @@ interface Props {
     params: Partial<
       Pick<
         Task,
-        'title' | 'description' | 'priority' | 'due_date' | 'assignee_id'
+        | 'title'
+        | 'description'
+        | 'priority'
+        | 'start_date'
+        | 'due_date'
+        | 'assignee_id'
       >
     >,
   ) => Promise<void>
@@ -46,6 +51,7 @@ export default function TaskEditModal({
   const [priority, setPriority] = useState<Task['priority']>(
     task?.priority ?? 'medium',
   )
+  const [startDate, setStartDate] = useState(task?.start_date ?? '')
   const [dueDate, setDueDate] = useState(task?.due_date ?? '')
   const [assigneeId, setAssigneeId] = useState<number | ''>(
     task?.assignee_id ?? '',
@@ -62,6 +68,7 @@ export default function TaskEditModal({
         title: title.trim(),
         description: description.trim() || null,
         priority,
+        start_date: startDate || null,
         due_date: dueDate || null,
         assignee_id: assigneeId === '' ? null : assigneeId,
       })
@@ -132,6 +139,15 @@ export default function TaskEditModal({
               <MenuItem value="high">高</MenuItem>
             </Select>
           </FormControl>
+          <TextField
+            label="開始日"
+            type="date"
+            size="small"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+            disabled={!canEdit}
+          />
           <TextField
             label="期日"
             type="date"

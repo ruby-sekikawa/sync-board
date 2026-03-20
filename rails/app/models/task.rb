@@ -14,7 +14,13 @@ class Task < ApplicationRecord
 
   default_scope { order(:position) }
 
+  before_create :set_default_start_date
+
   private
+
+    def set_default_start_date
+      self.start_date ||= Time.zone.today
+    end
 
     def max_tasks_per_column
       return unless column

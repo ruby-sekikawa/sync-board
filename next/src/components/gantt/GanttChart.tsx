@@ -11,7 +11,7 @@ const GanttReact = dynamic(
 )
 
 export function taskToGanttTask(task: Task): GanttTaskType {
-  const start = new Date(task.created_at.slice(0, 10))
+  const start = new Date(task.start_date ?? task.created_at.slice(0, 10))
   const hasDueDate = !!task.due_date
 
   return {
@@ -45,7 +45,7 @@ export function tasksToGanttTasks(
 
 interface Props {
   tasks: Task[]
-  onDateChange?: (taskId: number, dueDate: string) => void
+  onDateChange?: (taskId: number, startDate: string, dueDate: string) => void
 }
 
 export default function GanttChart({ tasks, onDateChange }: Props) {
@@ -63,8 +63,9 @@ export default function GanttChart({ tasks, onDateChange }: Props) {
 
   const handleDateChange = (task: GanttTaskType) => {
     const id = Number(task.id.replace('task-', ''))
+    const startDate = task.start.toISOString().slice(0, 10)
     const dueDate = task.end.toISOString().slice(0, 10)
-    onDateChange?.(id, dueDate)
+    onDateChange?.(id, startDate, dueDate)
   }
 
   return (

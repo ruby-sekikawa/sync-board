@@ -72,7 +72,7 @@ class Api::V1::TasksController < Api::V1::BaseController
     end
 
     def task_params
-      params.permit(:title, :description, :column_id, :assignee_id, :due_date, :priority, :position)
+      params.permit(:title, :description, :column_id, :assignee_id, :start_date, :due_date, :priority, :position)
     end
 
     def move_params

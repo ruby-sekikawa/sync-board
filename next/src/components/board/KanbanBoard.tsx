@@ -283,6 +283,7 @@ export default function KanbanBoard({ boardId, projectId, canEdit }: Props) {
             params.description,
             params.due_date,
             params.assignee_id,
+            params.start_date,
           )
           setAddTaskColumnId(null)
         }}

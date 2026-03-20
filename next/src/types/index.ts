@@ -51,6 +51,7 @@ export interface Task {
   description: string | null
   assignee_id: number | null
   assignee: MemberUser | null
+  start_date: string | null
   due_date: string | null
   priority: 'low' | 'medium' | 'high'
   position: number

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_03_15_080005) do
+ActiveRecord::Schema[7.1].define(version: 2026_03_20_022538) do
   create_table "boards", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "project_id", null: false
     t.string "name", limit: 100, null: false
@@ -56,6 +56,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_15_080005) do
     t.string "title", null: false
     t.text "description"
     t.bigint "assignee_id"
+    t.date "start_date"
     t.date "due_date"
     t.string "priority", limit: 10, default: "medium", null: false
     t.float "position", default: 65536.0, null: false
@@ -89,10 +90,6 @@ ActiveRecord::Schema[7.1].define(version: 2026_03_15_080005) do
     t.text "tokens"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
-    t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-    t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
   add_foreign_key "boards", "projects", on_delete: :cascade

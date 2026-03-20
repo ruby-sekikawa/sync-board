@@ -14,7 +14,7 @@ import {
 } from '@mui/material'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import useSWR from 'swr'
 import GanttChart from '@/components/gantt/GanttChart'
 import { useAuth } from '@/hooks/useAuth'
@@ -39,14 +39,13 @@ export default function GanttPage() {
   const { data: boardsData } = useSWR<{ boards: Board[] }>(
     id ? `/projects/${id}/boards` : null,
     fetcher,
-    {
-      onSuccess: (data) => {
-        if (!selectedBoardId && data.boards.length > 0) {
-          setSelectedBoardId(String(data.boards[0].id))
-        }
-      },
-    },
   )
+
+  useEffect(() => {
+    if (!selectedBoardId && boardsData?.boards.length) {
+      setSelectedBoardId(String(boardsData.boards[0].id))
+    }
+  }, [boardsData, selectedBoardId])
   const { data: tasksData, mutate } = useSWR<{ tasks: Task[] }>(
     selectedBoardId ? `/boards/${selectedBoardId}/tasks` : null,
     fetcher,
@@ -59,16 +58,21 @@ export default function GanttPage() {
     project?.current_user_role === 'owner' ||
     project?.current_user_role === 'editor'
 
-  const handleDateChange = async (taskId: number, dueDate: string) => {
+  const handleDateChange = async (
+    taskId: number,
+    startDate: string,
+    dueDate: string,
+  ) => {
     if (!canEdit) return
     try {
       await axiosInstance.patch(`/boards/${selectedBoardId}/tasks/${taskId}`, {
+        start_date: startDate,
         due_date: dueDate,
       })
       mutate()
-      setSnackbar({ msg: '期日を更新しました', severity: 'success' })
+      setSnackbar({ msg: '日付を更新しました', severity: 'success' })
     } catch {
-      setSnackbar({ msg: '期日の更新に失敗しました', severity: 'error' })
+      setSnackbar({ msg: '日付の更新に失敗しました', severity: 'error' })
     }
   }
 

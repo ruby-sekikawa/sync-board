@@ -77,16 +77,19 @@ export function useBoard(
     description?: string | null,
     due_date?: string | null,
     assignee_id?: number | null,
+    start_date?: string | null,
   ) => {
     if (!board) return
     const column = board.columns.find((c) => c.id === columnId)
     const maxPosition =
       column?.tasks.reduce((max, t) => Math.max(max, t.position), 0) ?? 0
+    const today = new Date().toISOString().slice(0, 10)
     await axiosInstance.post(`/boards/${boardId}/tasks`, {
       title,
       column_id: columnId,
       priority,
       description,
+      start_date: start_date ?? today,
       due_date,
       assignee_id: assignee_id ?? null,
       position: maxPosition + 65536,
@@ -106,7 +109,12 @@ export function useBoard(
     params: Partial<
       Pick<
         Task,
-        'title' | 'description' | 'priority' | 'due_date' | 'assignee_id'
+        | 'title'
+        | 'description'
+        | 'priority'
+        | 'start_date'
+        | 'due_date'
+        | 'assignee_id'
       >
     >,
   ) => {

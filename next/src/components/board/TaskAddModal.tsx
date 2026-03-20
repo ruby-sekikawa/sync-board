@@ -22,6 +22,7 @@ interface Props {
     title: string
     description: string | null
     priority: Task['priority']
+    start_date: string | null
     due_date: string | null
     assignee_id: number | null
   }) => Promise<void>
@@ -36,6 +37,7 @@ export default function TaskAddModal({
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [priority, setPriority] = useState<Task['priority']>('medium')
+  const [startDate, setStartDate] = useState('')
   const [dueDate, setDueDate] = useState('')
   const [assigneeId, setAssigneeId] = useState<number | ''>('')
   const [saving, setSaving] = useState(false)
@@ -44,6 +46,7 @@ export default function TaskAddModal({
     setTitle('')
     setDescription('')
     setPriority('medium')
+    setStartDate('')
     setDueDate('')
     setAssigneeId('')
     onClose()
@@ -57,6 +60,7 @@ export default function TaskAddModal({
         title: title.trim(),
         description: description.trim() || null,
         priority,
+        start_date: startDate || null,
         due_date: dueDate || null,
         assignee_id: assigneeId === '' ? null : assigneeId,
       })
@@ -107,6 +111,14 @@ export default function TaskAddModal({
               <MenuItem value="high">高</MenuItem>
             </Select>
           </FormControl>
+          <TextField
+            label="開始日"
+            type="date"
+            size="small"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            InputLabelProps={{ shrink: true }}
+          />
           <TextField
             label="期日"
             type="date"
