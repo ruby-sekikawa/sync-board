@@ -74,44 +74,51 @@ export default function GanttPage() {
 
   return (
     <Container maxWidth="xl" sx={{ py: 3 }}>
-      <Button
-        startIcon={<ArrowBackIcon />}
-        component={Link}
-        href={`/projects/${id}`}
-        sx={{ mb: 2 }}
-      >
-        {project?.name ?? ''}
-      </Button>
-
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          mb: 3,
-        }}
-      >
-        <Typography variant="h5" component="h1">
-          ガントチャート
-        </Typography>
-        <FormControl size="small" sx={{ minWidth: 200 }}>
-          <InputLabel>ボード</InputLabel>
-          <Select
-            value={selectedBoardId}
-            label="ボード"
-            onChange={(e) => setSelectedBoardId(e.target.value)}
-          >
-            {boards.map((board) => (
-              <MenuItem key={board.id} value={String(board.id)}>
-                {board.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+      <Box sx={{ mb: 3 }}>
+        <Button
+          size="small"
+          startIcon={<ArrowBackIcon />}
+          component={Link}
+          href={`/projects/${id}`}
+          sx={{
+            color: 'text.secondary',
+            px: 0,
+            minWidth: 0,
+            mb: 0.5,
+            '&:hover': { bgcolor: 'transparent', color: 'text.primary' },
+          }}
+        >
+          {project?.name ?? <Skeleton width={80} />}
+        </Button>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Typography variant="h5" component="h1" fontWeight="bold">
+            ガントチャート
+          </Typography>
+          <FormControl size="small" sx={{ minWidth: 200 }}>
+            <InputLabel>ボード</InputLabel>
+            <Select
+              value={selectedBoardId}
+              label="ボード"
+              onChange={(e) => setSelectedBoardId(e.target.value)}
+            >
+              {boards.map((board) => (
+                <MenuItem key={board.id} value={String(board.id)}>
+                  {board.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Box>
       </Box>
 
       {!selectedBoardId ? (
-        <Skeleton variant="rectangular" height={400} />
+        <Skeleton variant="rectangular" height={400} sx={{ borderRadius: 1 }} />
       ) : (
         <GanttChart
           tasks={tasks}

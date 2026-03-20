@@ -1,4 +1,5 @@
 import '@/styles/globals.css'
+import 'gantt-task-react/dist/index.css'
 import type { EmotionCache } from '@emotion/cache'
 import { CacheProvider } from '@emotion/react'
 import { ThemeProvider, CssBaseline } from '@mui/material'
