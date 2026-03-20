@@ -16,17 +16,27 @@ export default function NewProjectPage() {
   const router = useRouter()
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
+  const [nameError, setNameError] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
+  const validateName = (value: string): string | null => {
+    if (!value.trim()) return 'プロジェクト名は必須です'
+    if (value.length > 100)
+      return 'プロジェクト名は100文字以内で入力してください'
+    return null
+  }
+
+  const handleNameChange = (value: string) => {
+    setName(value)
+    if (nameError) setNameError(validateName(value))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name.trim()) {
-      setError('プロジェクト名は必須です')
-      return
-    }
-    if (name.length > 100) {
-      setError('プロジェクト名は100文字以内で入力してください')
+    const validationError = validateName(name)
+    if (validationError) {
+      setNameError(validationError)
       return
     }
     setSubmitting(true)
@@ -65,8 +75,9 @@ export default function NewProjectPage() {
         <TextField
           label="プロジェクト名"
           value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
+          onChange={(e) => handleNameChange(e.target.value)}
+          error={!!nameError}
+          helperText={nameError ?? `${name.length}/100`}
           inputProps={{ maxLength: 100 }}
         />
         <TextField

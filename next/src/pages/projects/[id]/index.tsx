@@ -1,6 +1,7 @@
 import AddIcon from '@mui/icons-material/Add'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import BarChartIcon from '@mui/icons-material/BarChart'
+import EditIcon from '@mui/icons-material/Edit'
 import PeopleIcon from '@mui/icons-material/People'
 import ViewKanbanOutlinedIcon from '@mui/icons-material/ViewKanbanOutlined'
 import {
@@ -15,9 +16,16 @@ import {
   CardActionArea,
   CardContent,
   Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  IconButton,
 } from '@mui/material'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import useSWR from 'swr'
 import { useAuth } from '@/hooks/useAuth'
 import axiosInstance from '@/lib/axios'
@@ -35,7 +43,11 @@ export default function ProjectDetailPage() {
   const router = useRouter()
   const { id } = router.query
 
-  const { data: projectData, error: projectError } = useSWR<{
+  const {
+    data: projectData,
+    error: projectError,
+    mutate: projectMutate,
+  } = useSWR<{
     project: Project
   }>(id ? `/projects/${id}` : null, fetcher)
   const {
@@ -49,6 +61,32 @@ export default function ProjectDetailPage() {
   const canEdit =
     project?.current_user_role === 'owner' ||
     project?.current_user_role === 'editor'
+
+  const [editOpen, setEditOpen] = useState(false)
+  const [editName, setEditName] = useState('')
+  const [editDescription, setEditDescription] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  const handleOpenEdit = () => {
+    setEditName(project?.name ?? '')
+    setEditDescription(project?.description ?? '')
+    setEditOpen(true)
+  }
+
+  const handleSaveEdit = async () => {
+    if (!editName.trim()) return
+    setSaving(true)
+    try {
+      await axiosInstance.patch(`/projects/${id}`, {
+        name: editName.trim(),
+        description: editDescription.trim() || null,
+      })
+      projectMutate()
+    } finally {
+      setSaving(false)
+      setEditOpen(false)
+    }
+  }
 
   const handleCreateBoard = async () => {
     const name = window.prompt('ボード名を入力してください')
@@ -103,6 +141,11 @@ export default function ProjectDetailPage() {
                 variant="outlined"
                 sx={{ fontSize: '0.7rem' }}
               />
+            )}
+            {canEdit && project && (
+              <IconButton size="small" onClick={handleOpenEdit}>
+                <EditIcon fontSize="small" />
+              </IconButton>
             )}
           </Box>
           <Box sx={{ display: 'flex', gap: 1 }}>
@@ -279,6 +322,49 @@ export default function ProjectDetailPage() {
           ))
         )}
       </Grid>
+      <Dialog
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>プロジェクトを編集</DialogTitle>
+        <DialogContent
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            pt: '16px !important',
+          }}
+        >
+          <TextField
+            label="プロジェクト名"
+            value={editName}
+            onChange={(e) => setEditName(e.target.value)}
+            fullWidth
+            required
+            autoFocus
+          />
+          <TextField
+            label="説明"
+            value={editDescription}
+            onChange={(e) => setEditDescription(e.target.value)}
+            fullWidth
+            multiline
+            rows={3}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setEditOpen(false)}>キャンセル</Button>
+          <Button
+            variant="contained"
+            onClick={handleSaveEdit}
+            disabled={saving || !editName.trim()}
+          >
+            {saving ? '保存中...' : '保存'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   )
 }
