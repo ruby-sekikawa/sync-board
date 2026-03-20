@@ -15,6 +15,7 @@ const baseTask: Task = {
   due_date: '2026-03-31',
   priority: 'medium',
   position: 65536,
+  start_date: '2026-03-01',
   created_by_user_id: 1,
   created_at: '2026-03-01T00:00:00.000Z',
   updated_at: '2026-03-01T00:00:00.000Z',
@@ -34,8 +35,13 @@ describe('taskToGanttTask', () => {
     expect(result.type).toBe('milestone')
   })
 
-  it('created_atをstartとして使用する', () => {
+  it('start_dateをstartとして使用する', () => {
     const result = taskToGanttTask(baseTask)
+    expect(result.start).toEqual(new Date('2026-03-01'))
+  })
+
+  it('start_dateがない場合はcreated_atをstartとして使用する', () => {
+    const result = taskToGanttTask({ ...baseTask, start_date: null })
     expect(result.start).toEqual(new Date('2026-03-01'))
   })
 
@@ -61,5 +67,15 @@ describe('tasksToGanttTasks', () => {
     const tasks: Task[] = [baseTask, { ...baseTask, id: 2, due_date: null }]
     const result = tasksToGanttTasks(tasks, { includeMilestones: true })
     expect(result).toHaveLength(2)
+  })
+
+  it('due_date順にソートする', () => {
+    const tasks: Task[] = [
+      { ...baseTask, id: 1, due_date: '2026-04-10' },
+      { ...baseTask, id: 2, due_date: '2026-03-01' },
+      { ...baseTask, id: 3, due_date: '2026-04-01' },
+    ]
+    const result = tasksToGanttTasks(tasks)
+    expect(result.map((t) => t.id)).toEqual(['task-2', 'task-3', 'task-1'])
   })
 })

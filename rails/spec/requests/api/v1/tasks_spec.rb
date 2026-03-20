@@ -70,6 +70,15 @@ RSpec.describe "Api::V1::Tasks", type: :request do
         json = response.parsed_body
         expect(json["task"]["title"]).to eq "新タスク"
         expect(json["task"]["created_by_user_id"]).to eq owner.id
+        expect(json["task"]["start_date"]).to eq Time.zone.today.to_s
+      end
+
+      it "start_dateを指定して作成できる" do
+        post "/api/v1/boards/#{board.id}/tasks",
+             params: valid_params.merge(start_date: "2026-01-01"),
+             headers: owner_headers, as: :json
+        expect(response).to have_http_status(:created)
+        expect(response.parsed_body["task"]["start_date"]).to eq "2026-01-01"
       end
     end
 

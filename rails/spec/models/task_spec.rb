@@ -39,6 +39,19 @@ RSpec.describe Task, type: :model do
       expect { task.priority = "invalid" }.to raise_error(ArgumentError)
     end
 
+    context "start_dateのデフォルト値" do
+      it "start_dateが未指定の場合は今日の日付が設定される" do
+        task = create(:task, column:, board:, created_by_user: user, start_date: nil)
+        expect(task.start_date).to eq Time.zone.today
+      end
+
+      it "start_dateが指定された場合はその値が使われる" do
+        date = Date.new(2026, 1, 1)
+        task = create(:task, column:, board:, created_by_user: user, start_date: date)
+        expect(task.start_date).to eq date
+      end
+    end
+
     context "1カラムあたり500件制限" do
       before { create_list(:task, 500, column:, board:, created_by_user: user) }
 

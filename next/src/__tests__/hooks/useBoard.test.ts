@@ -29,6 +29,7 @@ const mockBoard = {
           due_date: null,
           priority: 'medium',
           position: 65536,
+          start_date: '2026-03-15',
           created_by_user_id: 1,
           created_at: '2026-03-15T00:00:00.000Z',
           updated_at: '2026-03-15T00:00:00.000Z',
