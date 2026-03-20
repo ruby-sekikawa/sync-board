@@ -15,7 +15,7 @@ import axiosInstance from '@/lib/axios'
 
 export default function SignUp() {
   const router = useRouter()
-  const { isAuthenticated, isLoading, mutate } = useAuth({ requireAuth: false })
+  const { isAuthenticated, isLoading } = useAuth({ requireAuth: false })
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -38,7 +38,6 @@ export default function SignUp() {
         password,
         password_confirmation: password,
       })
-      await mutate()
       router.push('/projects')
     } catch {
       setError('登録に失敗しました。入力内容を確認してください')

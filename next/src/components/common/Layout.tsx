@@ -1,5 +1,15 @@
 import LogoutIcon from '@mui/icons-material/Logout'
-import { AppBar, Toolbar, Typography, IconButton, Box } from '@mui/material'
+import ViewKanbanIcon from '@mui/icons-material/ViewKanban'
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Box,
+  Avatar,
+  Tooltip,
+  Divider,
+} from '@mui/material'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useAuth } from '@/hooks/useAuth'
@@ -8,6 +18,10 @@ const AUTH_PAGES = ['/sign_in', '/sign_up']
 
 interface Props {
   children: React.ReactNode
+}
+
+function getInitials(name: string): string {
+  return name.slice(0, 1).toUpperCase()
 }
 
 export default function Layout({ children }: Props) {
@@ -21,29 +35,62 @@ export default function Layout({ children }: Props) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       {showHeader && (
-        <AppBar position="static" elevation={1}>
-          <Toolbar>
-            <Typography
-              variant="h6"
+        <AppBar
+          position="static"
+          color="default"
+          elevation={0}
+          sx={{
+            borderBottom: '1px solid',
+            borderColor: 'divider',
+            bgcolor: 'white',
+          }}
+        >
+          <Toolbar sx={{ minHeight: '52px !important', px: 2 }}>
+            <Box
               component={Link}
               href="/projects"
-              sx={{ flexGrow: 1, color: 'inherit', textDecoration: 'none' }}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.75,
+                textDecoration: 'none',
+                color: 'primary.main',
+                flexGrow: 1,
+              }}
             >
-              sync-board
-            </Typography>
-            {isAuthenticated && (
-              <>
-                <Typography variant="body2" sx={{ mr: 1 }}>
-                  {currentUser?.name}
-                </Typography>
-                <IconButton
-                  color="inherit"
-                  onClick={signOut}
-                  title="ログアウト"
-                >
-                  <LogoutIcon />
-                </IconButton>
-              </>
+              <ViewKanbanIcon sx={{ fontSize: 22 }} />
+              <Typography
+                variant="subtitle1"
+                fontWeight="bold"
+                sx={{ letterSpacing: 0.5, color: 'text.primary' }}
+              >
+                sync-board
+              </Typography>
+            </Box>
+            {isAuthenticated && currentUser && (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Avatar
+                    sx={{
+                      width: 28,
+                      height: 28,
+                      fontSize: '0.75rem',
+                      bgcolor: 'primary.main',
+                    }}
+                  >
+                    {getInitials(currentUser.name)}
+                  </Avatar>
+                  <Typography variant="body2" color="text.secondary">
+                    {currentUser.name}
+                  </Typography>
+                </Box>
+                <Divider orientation="vertical" flexItem sx={{ my: 1 }} />
+                <Tooltip title="ログアウト">
+                  <IconButton size="small" onClick={signOut} color="default">
+                    <LogoutIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </Box>
             )}
           </Toolbar>
         </AppBar>
