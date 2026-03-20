@@ -40,6 +40,10 @@ export function tasksToGanttTasks(
 ): GanttTaskType[] {
   return tasks
     .filter((t) => includeMilestones || !!t.due_date)
+    .sort(
+      (a, b) =>
+        new Date(a.due_date!).getTime() - new Date(b.due_date!).getTime(),
+    )
     .map(taskToGanttTask)
 }
 
