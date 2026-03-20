@@ -27,6 +27,7 @@ import {
   DialogActions,
 } from '@mui/material'
 import { useState, useCallback } from 'react'
+import useSWR from 'swr'
 import BoardColumn from './Column'
 import TaskAddModal from './TaskAddModal'
 import TaskCard from './TaskCard'
@@ -34,7 +35,8 @@ import TaskEditModal from './TaskEditModal'
 import ConnectionBanner from '@/components/common/ConnectionBanner'
 import { useBoard } from '@/hooks/useBoard'
 import { useBoardChannel } from '@/hooks/useBoardChannel'
-import type { Column, Task } from '@/types'
+import type { Column, MemberUser, ProjectMembership, Task } from '@/types'
+import { fetcher } from '@/utils'
 
 interface Props {
   boardId: string
@@ -55,6 +57,11 @@ export default function KanbanBoard({ boardId, projectId, canEdit }: Props) {
     deleteColumn,
   } = useBoard(boardId, projectId)
   const { connectionStatus } = useBoardChannel(boardId, projectId)
+  const { data: membershipsData } = useSWR<{
+    memberships: ProjectMembership[]
+  }>(`/projects/${projectId}/memberships`, fetcher)
+  const members: MemberUser[] =
+    membershipsData?.memberships.map((m) => m.user) ?? []
   const [activeTask, setActiveTask] = useState<Task | null>(null)
   const [overColumnId, setOverColumnId] = useState<number | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -266,6 +273,7 @@ export default function KanbanBoard({ boardId, projectId, canEdit }: Props) {
       <TaskAddModal
         open={addTaskColumnId !== null}
         onClose={() => setAddTaskColumnId(null)}
+        members={members}
         onSave={async (params) => {
           if (addTaskColumnId === null) return
           await addTask(
@@ -274,6 +282,7 @@ export default function KanbanBoard({ boardId, projectId, canEdit }: Props) {
             params.priority,
             params.description,
             params.due_date,
+            params.assignee_id,
           )
           setAddTaskColumnId(null)
         }}
@@ -283,6 +292,7 @@ export default function KanbanBoard({ boardId, projectId, canEdit }: Props) {
         key={selectedTask?.id}
         task={selectedTask}
         canEdit={canEdit}
+        members={members}
         onClose={() => setSelectedTask(null)}
         onSave={async (taskId, params) => {
           await updateTask(taskId, params)

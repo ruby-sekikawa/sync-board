@@ -12,24 +12,32 @@ import {
   Box,
 } from '@mui/material'
 import { useState } from 'react'
-import type { Task } from '@/types'
+import type { MemberUser, Task } from '@/types'
 
 interface Props {
   open: boolean
   onClose: () => void
+  members: MemberUser[]
   onSave: (params: {
     title: string
     description: string | null
     priority: Task['priority']
     due_date: string | null
+    assignee_id: number | null
   }) => Promise<void>
 }
 
-export default function TaskAddModal({ open, onClose, onSave }: Props) {
+export default function TaskAddModal({
+  open,
+  onClose,
+  members,
+  onSave,
+}: Props) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [priority, setPriority] = useState<Task['priority']>('medium')
   const [dueDate, setDueDate] = useState('')
+  const [assigneeId, setAssigneeId] = useState<number | ''>('')
   const [saving, setSaving] = useState(false)
 
   const handleClose = () => {
@@ -37,6 +45,7 @@ export default function TaskAddModal({ open, onClose, onSave }: Props) {
     setDescription('')
     setPriority('medium')
     setDueDate('')
+    setAssigneeId('')
     onClose()
   }
 
@@ -49,6 +58,7 @@ export default function TaskAddModal({ open, onClose, onSave }: Props) {
         description: description.trim() || null,
         priority,
         due_date: dueDate || null,
+        assignee_id: assigneeId === '' ? null : assigneeId,
       })
       handleClose()
     } finally {
@@ -84,7 +94,7 @@ export default function TaskAddModal({ open, onClose, onSave }: Props) {
           multiline
           rows={3}
         />
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <InputLabel>優先度</InputLabel>
             <Select
@@ -105,6 +115,21 @@ export default function TaskAddModal({ open, onClose, onSave }: Props) {
             onChange={(e) => setDueDate(e.target.value)}
             InputLabelProps={{ shrink: true }}
           />
+          <FormControl size="small" sx={{ minWidth: 140 }}>
+            <InputLabel>担当者</InputLabel>
+            <Select
+              value={assigneeId}
+              label="担当者"
+              onChange={(e) => setAssigneeId(e.target.value as number | '')}
+            >
+              <MenuItem value="">なし</MenuItem>
+              {members.map((m) => (
+                <MenuItem key={m.id} value={m.id}>
+                  {m.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Box>
       </DialogContent>
       <DialogActions>

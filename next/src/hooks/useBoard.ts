@@ -76,6 +76,7 @@ export function useBoard(
     priority: Task['priority'] = 'medium',
     description?: string | null,
     due_date?: string | null,
+    assignee_id?: number | null,
   ) => {
     if (!board) return
     const column = board.columns.find((c) => c.id === columnId)
@@ -87,6 +88,7 @@ export function useBoard(
       priority,
       description,
       due_date,
+      assignee_id: assignee_id ?? null,
       position: maxPosition + 65536,
     })
     mutate()
@@ -102,7 +104,10 @@ export function useBoard(
   const updateTask = async (
     taskId: number,
     params: Partial<
-      Pick<Task, 'title' | 'description' | 'priority' | 'due_date'>
+      Pick<
+        Task,
+        'title' | 'description' | 'priority' | 'due_date' | 'assignee_id'
+      >
     >,
   ) => {
     await axiosInstance.patch(`/boards/${boardId}/tasks/${taskId}`, params)

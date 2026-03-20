@@ -57,7 +57,15 @@ export default function BoardColumn({
         transition: 'border-color 0.15s, background-color 0.15s',
       }}
     >
-      <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, px: 0.5 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          mb: 1.5,
+          px: 0.5,
+          gap: 1,
+        }}
+      >
         {editingName ? (
           <TextField
             size="small"
@@ -73,29 +81,39 @@ export default function BoardColumn({
             }}
             autoFocus
             fullWidth
-            sx={{ mr: 1 }}
           />
         ) : (
-          <Typography
-            variant="subtitle1"
-            fontWeight="bold"
-            sx={{
-              flexGrow: 1,
-              cursor: canEdit ? 'pointer' : 'default',
-              '&:hover': canEdit ? { textDecoration: 'underline' } : {},
-            }}
-            onClick={() => canEdit && setEditingName(true)}
-          >
-            {column.name}
+          <>
             <Typography
-              component="span"
-              variant="caption"
-              color="text.secondary"
-              sx={{ ml: 1 }}
+              variant="subtitle2"
+              fontWeight="bold"
+              sx={{
+                flexGrow: 1,
+                cursor: canEdit ? 'pointer' : 'default',
+                letterSpacing: 0.3,
+                '&:hover': canEdit ? { opacity: 0.7 } : {},
+              }}
+              onClick={() => canEdit && setEditingName(true)}
+            >
+              {column.name}
+            </Typography>
+            <Box
+              sx={{
+                bgcolor: 'grey.300',
+                color: 'text.secondary',
+                borderRadius: '10px',
+                px: 1,
+                py: 0.25,
+                fontSize: '0.7rem',
+                fontWeight: 700,
+                lineHeight: 1.4,
+                minWidth: 20,
+                textAlign: 'center',
+              }}
             >
               {column.tasks.length}
-            </Typography>
-          </Typography>
+            </Box>
+          </>
         )}
         {canEdit && !editingName && (
           <IconButton

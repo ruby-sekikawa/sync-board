@@ -14,16 +14,20 @@ import {
   IconButton,
 } from '@mui/material'
 import { useState } from 'react'
-import type { Task } from '@/types'
+import type { MemberUser, Task } from '@/types'
 
 interface Props {
   task: Task | null
   canEdit: boolean
+  members: MemberUser[]
   onClose: () => void
   onSave: (
     taskId: number,
     params: Partial<
-      Pick<Task, 'title' | 'description' | 'priority' | 'due_date'>
+      Pick<
+        Task,
+        'title' | 'description' | 'priority' | 'due_date' | 'assignee_id'
+      >
     >,
   ) => Promise<void>
   onDelete: (taskId: number) => Promise<void>
@@ -32,6 +36,7 @@ interface Props {
 export default function TaskEditModal({
   task,
   canEdit,
+  members,
   onClose,
   onSave,
   onDelete,
@@ -42,6 +47,9 @@ export default function TaskEditModal({
     task?.priority ?? 'medium',
   )
   const [dueDate, setDueDate] = useState(task?.due_date ?? '')
+  const [assigneeId, setAssigneeId] = useState<number | ''>(
+    task?.assignee_id ?? '',
+  )
   const [saving, setSaving] = useState(false)
 
   if (!task) return null
@@ -55,6 +63,7 @@ export default function TaskEditModal({
         description: description.trim() || null,
         priority,
         due_date: dueDate || null,
+        assignee_id: assigneeId === '' ? null : assigneeId,
       })
       onClose()
     } finally {
@@ -109,7 +118,7 @@ export default function TaskEditModal({
           rows={3}
           disabled={!canEdit}
         />
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
           <FormControl size="small" sx={{ minWidth: 120 }}>
             <InputLabel>優先度</InputLabel>
             <Select
@@ -132,6 +141,22 @@ export default function TaskEditModal({
             InputLabelProps={{ shrink: true }}
             disabled={!canEdit}
           />
+          <FormControl size="small" sx={{ minWidth: 140 }}>
+            <InputLabel>担当者</InputLabel>
+            <Select
+              value={assigneeId}
+              label="担当者"
+              onChange={(e) => setAssigneeId(e.target.value as number | '')}
+              disabled={!canEdit}
+            >
+              <MenuItem value="">なし</MenuItem>
+              {members.map((m) => (
+                <MenuItem key={m.id} value={m.id}>
+                  {m.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </Box>
       </DialogContent>
       <DialogActions>
