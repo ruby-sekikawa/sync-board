@@ -30,6 +30,7 @@ const mockTask: Task = {
   due_date: '2026-03-31',
   priority: 'high',
   position: 65536,
+  start_date: '2026-03-15',
   created_by_user_id: 1,
   created_at: '2026-03-15T00:00:00.000Z',
   updated_at: '2026-03-15T00:00:00.000Z',
@@ -47,12 +48,12 @@ describe('TaskCard', () => {
 
   it('priorityを表示する', () => {
     render(<TaskCard task={mockTask} />)
-    expect(screen.getByText(/high/i)).toBeInTheDocument()
+    expect(screen.getByText('高')).toBeInTheDocument()
   })
 
   it('due_dateを表示する', () => {
     render(<TaskCard task={mockTask} />)
-    expect(screen.getByText(/2026-03-31/)).toBeInTheDocument()
+    expect(screen.getByText('3/31')).toBeInTheDocument()
   })
 
   it('isDragging の場合は opacity が下がる', () => {
