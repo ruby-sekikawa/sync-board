@@ -14,7 +14,7 @@ import {
 } from '@mui/material'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import useSWR from 'swr'
 import KanbanBoard from '@/components/board/KanbanBoard'
 import { useAuth } from '@/hooks/useAuth'
@@ -42,28 +42,10 @@ export default function BoardPage() {
     project?.currentUserRole === 'owner' ||
     project?.currentUserRole === 'editor'
 
-  const [editingName, setEditingName] = useState(false)
-  const [boardName, setBoardName] = useState('')
   const [editOpen, setEditOpen] = useState(false)
   const [editName, setEditName] = useState('')
   const [editDescription, setEditDescription] = useState('')
   const [saving, setSaving] = useState(false)
-
-  useEffect(() => {
-    if (board?.name) setBoardName(board.name)
-  }, [board?.name])
-
-  const handleNameSubmit = async () => {
-    const name = boardName.trim()
-    if (!name || name === board?.name) {
-      setBoardName(board?.name ?? '')
-      setEditingName(false)
-      return
-    }
-    await axiosInstance.patch(`/projects/${id}/boards/${boardId}`, { name })
-    mutateBoard()
-    setEditingName(false)
-  }
 
   const handleOpenEdit = () => {
     setEditName(board?.name ?? '')
@@ -80,7 +62,6 @@ export default function BoardPage() {
         description: editDescription.trim() || null,
       })
       mutateBoard()
-      setBoardName(editName.trim())
       setEditOpen(false)
     } finally {
       setSaving(false)
@@ -114,45 +95,9 @@ export default function BoardPage() {
           {project?.name ?? <Skeleton width={80} />}
         </Button>
         <Box sx={{ mt: 0.5 }}>
-          {editingName ? (
-            <TextField
-              size="small"
-              value={boardName}
-              onChange={(e) => setBoardName(e.target.value)}
-              onBlur={handleNameSubmit}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleNameSubmit()
-                if (e.key === 'Escape') {
-                  setBoardName(board?.name ?? '')
-                  setEditingName(false)
-                }
-              }}
-              autoFocus
-              sx={{ width: 280 }}
-              inputProps={{ style: { fontWeight: 700, fontSize: '1.1rem' } }}
-            />
-          ) : board ? (
+          {board ? (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-              <Typography
-                variant="h6"
-                fontWeight="bold"
-                sx={{
-                  cursor: canEdit ? 'pointer' : 'default',
-                  display: 'inline-block',
-                  '&:hover': canEdit
-                    ? {
-                        bgcolor: 'action.hover',
-                        borderRadius: 1,
-                        px: 0.5,
-                        mx: -0.5,
-                      }
-                    : {},
-                }}
-                onClick={(e) => {
-                  e.stopPropagation()
-                  if (canEdit) setEditingName(true)
-                }}
-              >
+              <Typography variant="h6" fontWeight="bold">
                 {board.name}
               </Typography>
               {canEdit && (
