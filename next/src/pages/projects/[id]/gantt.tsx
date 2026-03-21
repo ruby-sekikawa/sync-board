@@ -55,8 +55,8 @@ export default function GanttPage() {
   const boards = boardsData?.boards ?? []
   const tasks = tasksData?.tasks ?? []
   const canEdit =
-    project?.current_user_role === 'owner' ||
-    project?.current_user_role === 'editor'
+    project?.currentUserRole === 'owner' ||
+    project?.currentUserRole === 'editor'
 
   const handleDateChange = async (
     taskId: number,
@@ -66,8 +66,8 @@ export default function GanttPage() {
     if (!canEdit) return
     try {
       await axiosInstance.patch(`/boards/${selectedBoardId}/tasks/${taskId}`, {
-        start_date: startDate,
-        due_date: dueDate,
+        startDate,
+        dueDate,
       })
       mutate()
       setSnackbar({ msg: '日付を更新しました', severity: 'success' })

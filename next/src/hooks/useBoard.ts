@@ -45,7 +45,7 @@ export function useBoard(
           if (!movedTask) return { ...col, tasks: filtered }
           const updated: Task = {
             ...movedTask,
-            column_id: toColumnId,
+            columnId: toColumnId,
             position: toPosition,
           }
           const inserted = [...filtered, updated].sort(
@@ -60,7 +60,7 @@ export function useBoard(
 
     try {
       await axiosInstance.patch(`/boards/${boardId}/tasks/${taskId}/move`, {
-        column_id: toColumnId,
+        columnId: toColumnId,
         position: toPosition,
       })
     } catch {
@@ -75,9 +75,9 @@ export function useBoard(
     title: string,
     priority: Task['priority'] = 'medium',
     description?: string | null,
-    due_date?: string | null,
-    assignee_id?: number | null,
-    start_date?: string | null,
+    dueDate?: string | null,
+    assigneeId?: number | null,
+    startDate?: string | null,
   ) => {
     if (!board) return
     const column = board.columns.find((c) => c.id === columnId)
@@ -86,12 +86,12 @@ export function useBoard(
     const today = new Date().toISOString().slice(0, 10)
     await axiosInstance.post(`/boards/${boardId}/tasks`, {
       title,
-      column_id: columnId,
+      columnId,
       priority,
       description,
-      start_date: start_date ?? today,
-      due_date,
-      assignee_id: assignee_id ?? null,
+      startDate: startDate ?? today,
+      dueDate,
+      assigneeId: assigneeId ?? null,
       position: maxPosition + 65536,
     })
     mutate()
@@ -112,9 +112,9 @@ export function useBoard(
         | 'title'
         | 'description'
         | 'priority'
-        | 'start_date'
-        | 'due_date'
-        | 'assignee_id'
+        | 'startDate'
+        | 'dueDate'
+        | 'assigneeId'
       >
     >,
   ) => {

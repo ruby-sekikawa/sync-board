@@ -21,19 +21,19 @@ jest.mock('@dnd-kit/utilities', () => ({
 
 const mockTask: Task = {
   id: 1,
-  column_id: 1,
-  board_id: 1,
+  columnId: 1,
+  boardId: 1,
   title: 'テストタスク',
   description: 'タスクの説明',
-  assignee_id: null,
+  assigneeId: null,
   assignee: null,
-  due_date: '2026-03-31',
+  dueDate: '2026-03-31',
   priority: 'high',
   position: 65536,
-  start_date: '2026-03-15',
-  created_by_user_id: 1,
-  created_at: '2026-03-15T00:00:00.000Z',
-  updated_at: '2026-03-15T00:00:00.000Z',
+  startDate: '2026-03-15',
+  createdByUserId: 1,
+  createdAt: '2026-03-15T00:00:00.000Z',
+  updatedAt: '2026-03-15T00:00:00.000Z',
 }
 
 describe('TaskCard', () => {
@@ -51,7 +51,7 @@ describe('TaskCard', () => {
     expect(screen.getByText('高')).toBeInTheDocument()
   })
 
-  it('due_dateを表示する', () => {
+  it('dueDateを表示する', () => {
     render(<TaskCard task={mockTask} />)
     expect(screen.getByText('3/31')).toBeInTheDocument()
   })

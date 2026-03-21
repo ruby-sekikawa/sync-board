@@ -29,9 +29,9 @@ interface Props {
         | 'title'
         | 'description'
         | 'priority'
-        | 'start_date'
-        | 'due_date'
-        | 'assignee_id'
+        | 'startDate'
+        | 'dueDate'
+        | 'assigneeId'
       >
     >,
   ) => Promise<void>
@@ -51,10 +51,10 @@ export default function TaskEditModal({
   const [priority, setPriority] = useState<Task['priority']>(
     task?.priority ?? 'medium',
   )
-  const [startDate, setStartDate] = useState(task?.start_date ?? '')
-  const [dueDate, setDueDate] = useState(task?.due_date ?? '')
+  const [startDate, setStartDate] = useState(task?.startDate ?? '')
+  const [dueDate, setDueDate] = useState(task?.dueDate ?? '')
   const [assigneeId, setAssigneeId] = useState<number | ''>(
-    task?.assignee_id ?? '',
+    task?.assigneeId ?? '',
   )
   const [saving, setSaving] = useState(false)
 
@@ -68,9 +68,9 @@ export default function TaskEditModal({
         title: title.trim(),
         description: description.trim() || null,
         priority,
-        start_date: startDate || null,
-        due_date: dueDate || null,
-        assignee_id: assigneeId === '' ? null : assigneeId,
+        startDate: startDate || null,
+        dueDate: dueDate || null,
+        assigneeId: assigneeId === '' ? null : assigneeId,
       })
       onClose()
     } finally {

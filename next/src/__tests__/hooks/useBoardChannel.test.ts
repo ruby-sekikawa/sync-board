@@ -90,8 +90,8 @@ describe('useBoardChannel', () => {
     act(() => {
       callbacks.received({
         type: 'task_moved',
-        task: { id: 1, column_id: 2, position: 65536 },
-        previous_column_id: 1,
+        task: { id: 1, columnId: 2, position: 65536 },
+        previousColumnId: 1,
       })
     })
 

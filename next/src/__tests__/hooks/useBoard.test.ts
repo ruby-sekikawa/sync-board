@@ -8,48 +8,48 @@ jest.mock('@/lib/axios')
 
 const mockBoard = {
   id: 1,
-  project_id: 1,
+  projectId: 1,
   name: 'テストボード',
   description: null,
   columns: [
     {
       id: 1,
-      board_id: 1,
+      boardId: 1,
       name: 'TODO',
       position: 65536,
       tasks: [
         {
           id: 1,
-          column_id: 1,
-          board_id: 1,
+          columnId: 1,
+          boardId: 1,
           title: 'タスク1',
           description: null,
-          assignee_id: null,
+          assigneeId: null,
           assignee: null,
-          due_date: null,
+          dueDate: null,
           priority: 'medium',
           position: 65536,
-          start_date: '2026-03-15',
-          created_by_user_id: 1,
-          created_at: '2026-03-15T00:00:00.000Z',
-          updated_at: '2026-03-15T00:00:00.000Z',
+          startDate: '2026-03-15',
+          createdByUserId: 1,
+          createdAt: '2026-03-15T00:00:00.000Z',
+          updatedAt: '2026-03-15T00:00:00.000Z',
         },
       ],
-      created_at: '2026-03-15T00:00:00.000Z',
-      updated_at: '2026-03-15T00:00:00.000Z',
+      createdAt: '2026-03-15T00:00:00.000Z',
+      updatedAt: '2026-03-15T00:00:00.000Z',
     },
     {
       id: 2,
-      board_id: 1,
+      boardId: 1,
       name: 'IN PROGRESS',
       position: 131072,
       tasks: [],
-      created_at: '2026-03-15T00:00:00.000Z',
-      updated_at: '2026-03-15T00:00:00.000Z',
+      createdAt: '2026-03-15T00:00:00.000Z',
+      updatedAt: '2026-03-15T00:00:00.000Z',
     },
   ],
-  created_at: '2026-03-15T00:00:00.000Z',
-  updated_at: '2026-03-15T00:00:00.000Z',
+  createdAt: '2026-03-15T00:00:00.000Z',
+  updatedAt: '2026-03-15T00:00:00.000Z',
 }
 
 const mockMutate = jest.fn()
@@ -76,7 +76,7 @@ describe('useBoard', () => {
       data: {
         task: {
           ...mockBoard.columns[0].tasks[0],
-          column_id: 2,
+          columnId: 2,
           position: 65536,
         },
       },
@@ -95,7 +95,7 @@ describe('useBoard', () => {
     // Optimistic Update でmutateが呼ばれたことを確認
     expect(mockMutate).toHaveBeenCalled()
     expect(axiosInstance.patch).toHaveBeenCalledWith('/boards/1/tasks/1/move', {
-      column_id: 2,
+      columnId: 2,
       position: 65536,
     })
   })

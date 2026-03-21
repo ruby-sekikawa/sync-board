@@ -11,14 +11,14 @@ const GanttReact = dynamic(
 )
 
 export function taskToGanttTask(task: Task): GanttTaskType {
-  const start = new Date(task.start_date ?? task.created_at.slice(0, 10))
-  const hasDueDate = !!task.due_date
+  const start = new Date(task.startDate ?? task.createdAt.slice(0, 10))
+  const hasDueDate = !!task.dueDate
 
   return {
     id: `task-${task.id}`,
     name: task.title,
     start,
-    end: hasDueDate ? new Date(task.due_date!) : start,
+    end: hasDueDate ? new Date(task.dueDate!) : start,
     type: hasDueDate ? 'task' : 'milestone',
     progress: 0,
     isDisabled: false,
@@ -39,10 +39,9 @@ export function tasksToGanttTasks(
   { includeMilestones = false }: { includeMilestones?: boolean } = {},
 ): GanttTaskType[] {
   return tasks
-    .filter((t) => includeMilestones || !!t.due_date)
+    .filter((t) => includeMilestones || !!t.dueDate)
     .sort(
-      (a, b) =>
-        new Date(a.due_date!).getTime() - new Date(b.due_date!).getTime(),
+      (a, b) => new Date(a.dueDate!).getTime() - new Date(b.dueDate!).getTime(),
     )
     .map(taskToGanttTask)
 }

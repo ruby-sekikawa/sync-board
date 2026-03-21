@@ -27,8 +27,8 @@ export default function BoardPage() {
   const project = projectData?.project
   const board = boardData?.board
   const canEdit =
-    project?.current_user_role === 'owner' ||
-    project?.current_user_role === 'editor'
+    project?.currentUserRole === 'owner' ||
+    project?.currentUserRole === 'editor'
 
   const [editingName, setEditingName] = useState(false)
   const [boardName, setBoardName] = useState('')

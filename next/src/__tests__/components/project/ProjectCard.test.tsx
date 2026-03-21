@@ -5,11 +5,11 @@ const mockProject = {
   id: 1,
   name: 'テストプロジェクト',
   description: 'プロジェクトの説明',
-  current_user_role: 'owner' as const,
-  members_count: 3,
+  currentUserRole: 'owner' as const,
+  membersCount: 3,
   owner: { id: 1, name: '山田太郎', email: 'yamada@example.com', image: null },
-  created_at: '2026-03-15T00:00:00.000Z',
-  updated_at: '2026-03-15T00:00:00.000Z',
+  createdAt: '2026-03-15T00:00:00.000Z',
+  updatedAt: '2026-03-15T00:00:00.000Z',
 }
 
 describe('ProjectCard', () => {
@@ -35,7 +35,7 @@ describe('ProjectCard', () => {
 
   it('viewer の場合は削除ボタンを表示しない', () => {
     render(
-      <ProjectCard project={{ ...mockProject, current_user_role: 'viewer' }} />,
+      <ProjectCard project={{ ...mockProject, currentUserRole: 'viewer' }} />,
     )
     expect(
       screen.queryByRole('button', { name: /削除/ }),

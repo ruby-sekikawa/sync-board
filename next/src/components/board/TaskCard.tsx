@@ -48,7 +48,7 @@ export default function TaskCard({ task, onClick }: Props) {
   }
 
   const priority = PRIORITY_CONFIG[task.priority]
-  const overdue = task.due_date ? isOverdue(task.due_date) : false
+  const overdue = task.dueDate ? isOverdue(task.dueDate) : false
 
   return (
     <Card
@@ -84,7 +84,7 @@ export default function TaskCard({ task, onClick }: Props) {
               color={priority.color}
               sx={{ height: 18, fontSize: '0.65rem', fontWeight: 600 }}
             />
-            {task.due_date && (
+            {task.dueDate && (
               <Box
                 sx={{
                   display: 'flex',
@@ -98,7 +98,7 @@ export default function TaskCard({ task, onClick }: Props) {
                   variant="caption"
                   sx={{ fontSize: '0.65rem', fontWeight: overdue ? 600 : 400 }}
                 >
-                  {formatDate(task.due_date)}
+                  {formatDate(task.dueDate)}
                 </Typography>
               </Box>
             )}

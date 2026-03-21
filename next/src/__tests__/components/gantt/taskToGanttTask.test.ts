@@ -6,23 +6,23 @@ import type { Task } from '@/types'
 
 const baseTask: Task = {
   id: 1,
-  column_id: 1,
-  board_id: 1,
+  columnId: 1,
+  boardId: 1,
   title: 'テストタスク',
   description: null,
-  assignee_id: null,
+  assigneeId: null,
   assignee: null,
-  due_date: '2026-03-31',
+  dueDate: '2026-03-31',
   priority: 'medium',
   position: 65536,
-  start_date: '2026-03-01',
-  created_by_user_id: 1,
-  created_at: '2026-03-01T00:00:00.000Z',
-  updated_at: '2026-03-01T00:00:00.000Z',
+  startDate: '2026-03-01',
+  createdByUserId: 1,
+  createdAt: '2026-03-01T00:00:00.000Z',
+  updatedAt: '2026-03-01T00:00:00.000Z',
 }
 
 describe('taskToGanttTask', () => {
-  it('due_dateがある場合はtaskとして変換する', () => {
+  it('dueDateがある場合はtaskとして変換する', () => {
     const result = taskToGanttTask(baseTask)
     expect(result.id).toBe('task-1')
     expect(result.name).toBe('テストタスク')
@@ -30,18 +30,18 @@ describe('taskToGanttTask', () => {
     expect(result.end).toEqual(new Date('2026-03-31'))
   })
 
-  it('due_dateがない場合はmilestoneとして変換する', () => {
-    const result = taskToGanttTask({ ...baseTask, due_date: null })
+  it('dueDateがない場合はmilestoneとして変換する', () => {
+    const result = taskToGanttTask({ ...baseTask, dueDate: null })
     expect(result.type).toBe('milestone')
   })
 
-  it('start_dateをstartとして使用する', () => {
+  it('startDateをstartとして使用する', () => {
     const result = taskToGanttTask(baseTask)
     expect(result.start).toEqual(new Date('2026-03-01'))
   })
 
-  it('start_dateがない場合はcreated_atをstartとして使用する', () => {
-    const result = taskToGanttTask({ ...baseTask, start_date: null })
+  it('startDateがない場合はcreatedAtをstartとして使用する', () => {
+    const result = taskToGanttTask({ ...baseTask, startDate: null })
     expect(result.start).toEqual(new Date('2026-03-01'))
   })
 
@@ -52,28 +52,28 @@ describe('taskToGanttTask', () => {
 })
 
 describe('tasksToGanttTasks', () => {
-  it('due_dateがないタスクを除外する', () => {
+  it('dueDateがないタスクを除外する', () => {
     const tasks: Task[] = [
       baseTask,
-      { ...baseTask, id: 2, due_date: null },
-      { ...baseTask, id: 3, due_date: '2026-04-01' },
+      { ...baseTask, id: 2, dueDate: null },
+      { ...baseTask, id: 3, dueDate: '2026-04-01' },
     ]
     const result = tasksToGanttTasks(tasks, { includeMilestones: false })
     expect(result).toHaveLength(2)
     expect(result.map((t) => t.id)).toEqual(['task-1', 'task-3'])
   })
 
-  it('includeMilestones=trueの場合はdue_dateなしも含める', () => {
-    const tasks: Task[] = [baseTask, { ...baseTask, id: 2, due_date: null }]
+  it('includeMilestones=trueの場合はdueDateなしも含める', () => {
+    const tasks: Task[] = [baseTask, { ...baseTask, id: 2, dueDate: null }]
     const result = tasksToGanttTasks(tasks, { includeMilestones: true })
     expect(result).toHaveLength(2)
   })
 
-  it('due_date順にソートする', () => {
+  it('dueDate順にソートする', () => {
     const tasks: Task[] = [
-      { ...baseTask, id: 1, due_date: '2026-04-10' },
-      { ...baseTask, id: 2, due_date: '2026-03-01' },
-      { ...baseTask, id: 3, due_date: '2026-04-01' },
+      { ...baseTask, id: 1, dueDate: '2026-04-10' },
+      { ...baseTask, id: 2, dueDate: '2026-03-01' },
+      { ...baseTask, id: 3, dueDate: '2026-04-01' },
     ]
     const result = tasksToGanttTasks(tasks)
     expect(result.map((t) => t.id)).toEqual(['task-2', 'task-3', 'task-1'])

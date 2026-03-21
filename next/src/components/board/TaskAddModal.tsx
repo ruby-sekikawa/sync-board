@@ -22,9 +22,9 @@ interface Props {
     title: string
     description: string | null
     priority: Task['priority']
-    start_date: string | null
-    due_date: string | null
-    assignee_id: number | null
+    startDate: string | null
+    dueDate: string | null
+    assigneeId: number | null
   }) => Promise<void>
 }
 
@@ -60,9 +60,9 @@ export default function TaskAddModal({
         title: title.trim(),
         description: description.trim() || null,
         priority,
-        start_date: startDate || null,
-        due_date: dueDate || null,
-        assignee_id: assigneeId === '' ? null : assigneeId,
+        startDate: startDate || null,
+        dueDate: dueDate || null,
+        assigneeId: assigneeId === '' ? null : assigneeId,
       })
       handleClose()
     } finally {

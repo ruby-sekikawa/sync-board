@@ -113,7 +113,7 @@ export default function KanbanBoard({ boardId, projectId, canEdit }: Props) {
       const allTasks = board.columns.flatMap((c) => c.tasks)
       const overTask = allTasks.find((t) => t.id === overId)
       const toColumnId = overTask
-        ? overTask.column_id
+        ? overTask.columnId
         : board.columns.find((c) => c.id === overId)?.id
 
       if (!toColumnId) return
@@ -281,9 +281,9 @@ export default function KanbanBoard({ boardId, projectId, canEdit }: Props) {
             params.title,
             params.priority,
             params.description,
-            params.due_date,
-            params.assignee_id,
-            params.start_date,
+            params.dueDate,
+            params.assigneeId,
+            params.startDate,
           )
           setAddTaskColumnId(null)
         }}

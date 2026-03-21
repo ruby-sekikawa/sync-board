@@ -93,7 +93,7 @@ export default function ProjectMembersPage() {
         {project?.name ?? <Skeleton width={200} />} - メンバー管理
       </Typography>
 
-      {project?.current_user_role === 'owner' && (
+      {project?.currentUserRole === 'owner' && (
         <Box
           component="form"
           onSubmit={handleInvite}
@@ -119,7 +119,7 @@ export default function ProjectMembersPage() {
       ) : (
         <MemberList
           members={memberships}
-          currentUserRole={project?.current_user_role ?? 'viewer'}
+          currentUserRole={project?.currentUserRole ?? 'viewer'}
           onRoleChange={handleRoleChange}
           onDelete={handleDelete}
         />

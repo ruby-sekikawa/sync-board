@@ -59,8 +59,8 @@ export default function ProjectDetailPage() {
   const project = projectData?.project
   const boards = boardsData?.boards ?? []
   const canEdit =
-    project?.current_user_role === 'owner' ||
-    project?.current_user_role === 'editor'
+    project?.currentUserRole === 'owner' ||
+    project?.currentUserRole === 'editor'
 
   const [editOpen, setEditOpen] = useState(false)
   const [editName, setEditName] = useState('')
@@ -134,9 +134,9 @@ export default function ProjectDetailPage() {
             <Typography variant="h5" component="h1" fontWeight="bold">
               {project?.name ?? <Skeleton width={200} />}
             </Typography>
-            {project?.current_user_role && (
+            {project?.currentUserRole && (
               <Chip
-                label={ROLE_LABEL[project.current_user_role]}
+                label={ROLE_LABEL[project.currentUserRole]}
                 size="small"
                 variant="outlined"
                 sx={{ fontSize: '0.7rem' }}

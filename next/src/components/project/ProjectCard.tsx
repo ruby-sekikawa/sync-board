@@ -31,16 +31,16 @@ export default function ProjectCard({ project, onDelete }: Props) {
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
           <PeopleIcon fontSize="small" color="action" />
           <Typography variant="body2" color="text.secondary">
-            {project.members_count}人
+            {project.membersCount}人
           </Typography>
-          <Chip label={project.current_user_role} size="small" sx={{ ml: 1 }} />
+          <Chip label={project.currentUserRole} size="small" sx={{ ml: 1 }} />
         </Box>
       </CardContent>
       <CardActions>
         <Button size="small" component={Link} href={`/projects/${project.id}`}>
           開く
         </Button>
-        {project.current_user_role === 'owner' && onDelete && (
+        {project.currentUserRole === 'owner' && onDelete && (
           <Button
             size="small"
             color="error"

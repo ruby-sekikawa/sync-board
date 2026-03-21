@@ -1,3 +1,4 @@
+import humps from 'humps'
 import { useEffect, useRef, useState } from 'react'
 import { useBoard } from './useBoard'
 import { getConsumer } from '@/lib/actioncable'
@@ -54,7 +55,8 @@ export function useBoardChannel(
           scheduleReconnect()
         },
 
-        received(data: BoardChannelMessage) {
+        received(rawData: BoardChannelMessage) {
+          const data = humps.camelizeKeys(rawData) as BoardChannelMessage
           handleMessage(data)
         },
       },
