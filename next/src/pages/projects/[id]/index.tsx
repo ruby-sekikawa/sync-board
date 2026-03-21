@@ -67,6 +67,11 @@ export default function ProjectDetailPage() {
   const [editDescription, setEditDescription] = useState('')
   const [saving, setSaving] = useState(false)
 
+  const [boardCreateOpen, setBoardCreateOpen] = useState(false)
+  const [newBoardName, setNewBoardName] = useState('')
+  const [newBoardDescription, setNewBoardDescription] = useState('')
+  const [boardCreating, setBoardCreating] = useState(false)
+
   const handleOpenEdit = () => {
     setEditName(project?.name ?? '')
     setEditDescription(project?.description ?? '')
@@ -88,11 +93,25 @@ export default function ProjectDetailPage() {
     }
   }
 
+  const handleOpenBoardCreate = () => {
+    setNewBoardName('')
+    setNewBoardDescription('')
+    setBoardCreateOpen(true)
+  }
+
   const handleCreateBoard = async () => {
-    const name = window.prompt('ボード名を入力してください')
-    if (!name?.trim()) return
-    await axiosInstance.post(`/projects/${id}/boards`, { name })
-    mutate()
+    if (!newBoardName.trim()) return
+    setBoardCreating(true)
+    try {
+      await axiosInstance.post(`/projects/${id}/boards`, {
+        name: newBoardName.trim(),
+        description: newBoardDescription.trim() || null,
+      })
+      mutate()
+      setBoardCreateOpen(false)
+    } finally {
+      setBoardCreating(false)
+    }
   }
 
   if (projectError) {
@@ -172,7 +191,7 @@ export default function ProjectDetailPage() {
                 variant="contained"
                 size="small"
                 startIcon={<AddIcon />}
-                onClick={handleCreateBoard}
+                onClick={handleOpenBoardCreate}
               >
                 ボード追加
               </Button>
@@ -180,7 +199,11 @@ export default function ProjectDetailPage() {
           </Box>
         </Box>
         {project?.description && (
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ whiteSpace: 'pre-wrap' }}
+          >
             {project.description}
           </Typography>
         )}
@@ -244,7 +267,7 @@ export default function ProjectDetailPage() {
                   variant="outlined"
                   size="small"
                   startIcon={<AddIcon />}
-                  onClick={handleCreateBoard}
+                  onClick={handleOpenBoardCreate}
                   sx={{ mt: 2 }}
                 >
                   最初のボードを作成
@@ -308,6 +331,7 @@ export default function ProjectDetailPage() {
                               WebkitLineClamp: 2,
                               WebkitBoxOrient: 'vertical',
                               overflow: 'hidden',
+                              whiteSpace: 'pre-wrap',
                             }}
                           >
                             {board.description}
@@ -322,6 +346,50 @@ export default function ProjectDetailPage() {
           ))
         )}
       </Grid>
+      <Dialog
+        open={boardCreateOpen}
+        onClose={() => setBoardCreateOpen(false)}
+        fullWidth
+        maxWidth="sm"
+      >
+        <DialogTitle>ボードを追加</DialogTitle>
+        <DialogContent
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            pt: '16px !important',
+          }}
+        >
+          <TextField
+            label="ボード名"
+            value={newBoardName}
+            onChange={(e) => setNewBoardName(e.target.value)}
+            fullWidth
+            required
+            autoFocus
+          />
+          <TextField
+            label="説明"
+            value={newBoardDescription}
+            onChange={(e) => setNewBoardDescription(e.target.value)}
+            fullWidth
+            multiline
+            rows={3}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setBoardCreateOpen(false)}>キャンセル</Button>
+          <Button
+            variant="contained"
+            onClick={handleCreateBoard}
+            disabled={boardCreating || !newBoardName.trim()}
+          >
+            {boardCreating ? '作成中...' : '作成'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <Dialog
         open={editOpen}
         onClose={() => setEditOpen(false)}
