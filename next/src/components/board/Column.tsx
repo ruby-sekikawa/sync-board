@@ -29,7 +29,7 @@ export default function BoardColumn({
 }: Props) {
   const [editingName, setEditingName] = useState(false)
   const [columnName, setColumnName] = useState(column.name)
-  const { setNodeRef } = useDroppable({ id: column.id })
+  const { setNodeRef } = useDroppable({ id: `col-${column.id}` })
 
   const handleNameSubmit = () => {
     const name = columnName.trim()
@@ -47,7 +47,9 @@ export default function BoardColumn({
       ref={setNodeRef}
       sx={{
         width: 280,
-        minHeight: 200,
+        height: 500,
+        display: 'flex',
+        flexDirection: 'column',
         bgcolor: isOver ? 'action.hover' : 'grey.100',
         borderRadius: 1,
         p: 1,
@@ -126,14 +128,16 @@ export default function BoardColumn({
         )}
       </Box>
 
-      <SortableContext
-        items={column.tasks.map((t) => t.id)}
-        strategy={verticalListSortingStrategy}
-      >
-        {column.tasks.map((task) => (
-          <TaskCard key={task.id} task={task} onClick={onTaskClick} />
-        ))}
-      </SortableContext>
+      <Box sx={{ flexGrow: 1, overflowY: 'auto', minHeight: 0 }}>
+        <SortableContext
+          items={column.tasks.map((t) => t.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          {column.tasks.map((task) => (
+            <TaskCard key={task.id} task={task} onClick={onTaskClick} />
+          ))}
+        </SortableContext>
+      </Box>
 
       {onOpenAddTask && (
         <Button

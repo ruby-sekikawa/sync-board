@@ -95,7 +95,13 @@ export default function KanbanBoard({ boardId, projectId, canEdit }: Props) {
 
   const handleDragOver = useCallback((event: DragOverEvent) => {
     const overId = event.over?.id
-    if (overId) setOverColumnId(Number(overId))
+    if (!overId) return
+    const overIdStr = String(overId)
+    if (overIdStr.startsWith('col-')) {
+      setOverColumnId(Number(overIdStr.slice(4)))
+    } else {
+      setOverColumnId(Number(overId))
+    }
   }, [])
 
   const handleDragEnd = useCallback(
@@ -106,15 +112,20 @@ export default function KanbanBoard({ boardId, projectId, canEdit }: Props) {
       if (!over || !board) return
 
       const taskId = Number(active.id)
-      const overId = Number(over.id)
+      const overIdStr = String(over.id)
       const isDraggingDown = delta.y > 0
 
-      // over.id がタスクIDかカラムIDかを判定
+      // over.id がカラムID（'col-N'）かタスクIDかを判定
       const allTasks = board.columns.flatMap((c) => c.tasks)
-      const overTask = allTasks.find((t) => t.id === overId)
-      const toColumnId = overTask
-        ? overTask.columnId
-        : board.columns.find((c) => c.id === overId)?.id
+      let toColumnId: number | undefined
+      let overTask: (typeof allTasks)[number] | undefined
+      if (overIdStr.startsWith('col-')) {
+        toColumnId = board.columns.find((c) => c.id === Number(overIdStr.slice(4)))?.id
+      } else {
+        const overId = Number(over.id)
+        overTask = allTasks.find((t) => t.id === overId)
+        toColumnId = overTask ? overTask.columnId : undefined
+      }
 
       if (!toColumnId) return
 
@@ -125,7 +136,7 @@ export default function KanbanBoard({ boardId, projectId, canEdit }: Props) {
       let toPosition: number
 
       if (overTask && overTask.id !== taskId) {
-        const overIndex = toTasks.findIndex((t) => t.id === overTask.id)
+        const overIndex = toTasks.findIndex((t) => t.id === overTask!.id)
         if (isDraggingDown) {
           // 下方向: overTask の後ろに挿入
           const prev = toTasks[overIndex]?.position ?? overTask.position
